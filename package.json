@@ -1,0 +1,10 @@
+{
+  "name": "com.arjhantoteck.dialoguesystem",
+  "displayName": "Dialogue System",
+  "version": "1.0.1",
+  "unity": "2021.3",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/ArjhanToteck/Unity-Dialogue-System.git"
+  }
+}
