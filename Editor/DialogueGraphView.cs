@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -118,21 +119,34 @@ namespace DialogueSystem.Editor
 		{
 			DialogueNode choiceNode = new DialogueNode
 			{
-				title = nodeName
+				title = nodeName,
+				dialogue = new Choice()
 			};
 
 			AddInputPort(choiceNode);
 
-			var addChoiceButton = new Button(() =>
+			var addOptionButton = new Button(() =>
 			{
-				AddOutputPort(choiceNode, "New Choice");
+				AddChoice(choiceNode);
 			});
-			addChoiceButton.text = "Add Choice";
-			choiceNode.titleContainer.Add(addChoiceButton);
+			addOptionButton.text = "Add Option";
+			choiceNode.titleContainer.Add(addOptionButton);
 
 			AddElement(choiceNode);
 
 			return choiceNode;
+		}
+
+		private void AddChoice(DialogueNode choiceNode)
+		{
+			Choice.Option option = new Choice.Option
+			{
+				option = "New Option"
+			};
+
+			AddOutputPort(choiceNode, option.option);
+
+			((Choice)choiceNode.dialogue).options.Add(option);
 		}
 	}
 }

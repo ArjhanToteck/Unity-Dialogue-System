@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Codice.CM.Client.Gui;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditor.PackageManager.UI;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,12 +10,11 @@ namespace DialogueSystem.Editor
 {
     public class DialogueGraphWindow : EditorWindow
     {
-        private const string dialogueExtension = ".dialogue";
+        private const string dialogueExtension = ".conversation";
 
         private DialogueGraphView graphView;
         private string savePath;
 
-        [MenuItem("Graph/Dialogue")]
         public static DialogueGraphWindow OpenDialogueGraphWindow()
         {
             DialogueGraphWindow window = GetWindow<DialogueGraphWindow>();
@@ -26,16 +23,14 @@ namespace DialogueSystem.Editor
             return window;
         }
 
-
         [OnOpenAsset(1)]
         public static bool OnOpenAsset(int instanceID, int line)
         {
             // check what asset was opened
             string assetPath = AssetDatabase.GetAssetPath(instanceID);
-            string assetExtension = System.IO.Path.GetExtension(assetPath);
 
             // check if dialogue asset was opened
-            if (assetExtension == dialogueExtension)
+            if (assetPath.EndsWith(dialogueExtension))
             {
                 // open editor window and make note of the loaded asset path
                 var window = OpenDialogueGraphWindow();
@@ -85,6 +80,14 @@ namespace DialogueSystem.Editor
             });
             createChoiceNodeButton.text = "Create Choice Node";
             toolbar.Add(createChoiceNodeButton);
+
+            // save button
+            var saveButton = new Button(() =>
+            {
+                ConversationSaveSystem.SaveConversation(graphView, savePath);
+            });
+            saveButton.text = "Save";
+            toolbar.Add(saveButton);
 
             rootVisualElement.Add(toolbar);
         }
