@@ -6,94 +6,133 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DialogueGraphView : GraphView
+namespace DialogueSystem.Editor
 {
-	private readonly Vector2 defaultNodeSize = new Vector2(150, 200);
-	private readonly Vector2 defaultNodePosition = new Vector2(100, 100);
-
-	public DialogueGraphView()
+	public class DialogueGraphView : GraphView
 	{
-		this.AddManipulator(new ContentDragger());
-		this.AddManipulator(new SelectionDragger());
-		this.AddManipulator(new RectangleSelector());
+		private readonly Vector2 defaultNodeSize = new Vector2(150, 200);
+		private readonly Vector2 defaultNodePosition = new Vector2(100, 100);
 
-		AddElement(CreateEntryPointNode());
-	}
-
-	public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
-	{
-		var compatiblePorts = new List<Port>();
-
-		foreach (Port port in ports)
+		public DialogueGraphView()
 		{
-			// make sure port doesn't connect to itself
-			if (startPort == port) continue;
+			styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraph"));
+			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
-			// make sure input doesn't connect to input and output doesn't connect to output
-			if (startPort.direction == port.direction) continue;
+			this.AddManipulator(new ContentDragger());
+			this.AddManipulator(new SelectionDragger());
+			this.AddManipulator(new RectangleSelector());
 
-			compatiblePorts.Add(port);
+			var grid = new GridBackground();
+			Insert(0, grid);
+			grid.StretchToParentSize();
+
+			AddElement(CreateEntryPointNode());
 		}
 
-		return compatiblePorts;
-	}
+		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+		{
+			var compatiblePorts = new List<Port>();
 
-	private Port CreatePort(DialogueNode node, Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
-	{
-		return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
-	}
+			foreach (Port port in ports)
+			{
+				// make sure port doesn't connect to itself
+				if (startPort == port) continue;
 
-	private Port AddInputPort(DialogueNode dialogueNode){
-		// create and add
-		var inputPort = CreatePort(dialogueNode, Direction.Input, Port.Capacity.Multi);
-		inputPort.portName = "Previous";
+				// make sure input doesn't connect to input and output doesn't connect to output
+				if (startPort.direction == port.direction) continue;
 
-		// refresh
-		dialogueNode.inputContainer.Add(inputPort);
-		dialogueNode.RefreshExpandedState();
-		dialogueNode.RefreshPorts();
-		dialogueNode.SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
+				compatiblePorts.Add(port);
+			}
 
-		return inputPort;
-	}
+			return compatiblePorts;
+		}
 
-	private Port AddOutputPort(DialogueNode dialogueNode){
-		// create and add
-		Port outputPort = CreatePort(dialogueNode, Direction.Output);
-		outputPort.portName = "Next";
-		dialogueNode.outputContainer.Add(outputPort);
+		private Port CreatePort(DialogueNode node, Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
+		{
+			return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
+		}
 
-		// refresh
-		dialogueNode.RefreshExpandedState();
-		dialogueNode.RefreshPorts();
+		private Port AddInputPort(DialogueNode dialogueNode, string portName = "Previous")
+		{
+			// create and add
+			var inputPort = CreatePort(dialogueNode, Direction.Input, Port.Capacity.Multi);
+			inputPort.portName = portName;
 
-		return outputPort;
-	}
+			// refresh
+			dialogueNode.inputContainer.Add(inputPort);
+			dialogueNode.RefreshExpandedState();
+			dialogueNode.RefreshPorts();
+			dialogueNode.SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
 
-    private DialogueNode CreateEntryPointNode()
-    {
-        // create default entry node
-        var dialogueNode = new EntryPointNode();
+			return inputPort;
+		}
 
-		AddOutputPort(dialogueNode);
+		private Port AddOutputPort(DialogueNode dialogueNode, string portName = "Next")
+		{
+			// create and add
+			Port outputPort = CreatePort(dialogueNode, Direction.Output);
+			outputPort.portName = portName;
+			dialogueNode.outputContainer.Add(outputPort);
 
-        // place node at start position
-        dialogueNode.SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
+			// refresh
+			dialogueNode.RefreshExpandedState();
+			dialogueNode.RefreshPorts();
 
-        return dialogueNode;
-    }
+			return outputPort;
+		}
 
-	public SpeechNode CreateSpeechNode(string nodeName)
-	{
-		SpeechNode speechNode = new SpeechNode{
-			title = nodeName,
-		};
-		
-		AddInputPort(speechNode);
-		AddOutputPort(speechNode);
+		private DialogueNode CreateEntryPointNode()
+		{
+			// create default entry node
+			var dialogueNode = new DialogueNode()
+			{
+				title = "Entry",
+				dialogue = new EntryPoint()
+			};
 
-		AddElement(speechNode);
+			AddOutputPort(dialogueNode);
 
-		return speechNode;
+			// place node at start position
+			dialogueNode.SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
+
+			return dialogueNode;
+		}
+
+		public DialogueNode CreateSpeechNode(string nodeName)
+		{
+			DialogueNode speechNode = new DialogueNode
+			{
+				title = nodeName,
+				dialogue = new Speech()
+			};
+
+			AddInputPort(speechNode);
+			AddOutputPort(speechNode);
+
+			AddElement(speechNode);
+
+			return speechNode;
+		}
+
+		public DialogueNode CreateChoiceNode(string nodeName)
+		{
+			DialogueNode choiceNode = new DialogueNode
+			{
+				title = nodeName
+			};
+
+			AddInputPort(choiceNode);
+
+			var addChoiceButton = new Button(() =>
+			{
+				AddOutputPort(choiceNode, "New Choice");
+			});
+			addChoiceButton.text = "Add Choice";
+			choiceNode.titleContainer.Add(addChoiceButton);
+
+			AddElement(choiceNode);
+
+			return choiceNode;
+		}
 	}
 }

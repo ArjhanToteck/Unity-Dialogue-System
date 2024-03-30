@@ -3,54 +3,96 @@ using System.Collections;
 using System.Collections.Generic;
 using Codice.CM.Client.Gui;
 using UnityEditor;
+using UnityEditor.Callbacks;
+using UnityEditor.PackageManager.UI;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-
-public class DialogueGraphWindow : EditorWindow
+namespace DialogueSystem.Editor
 {
-    private DialogueGraphView graphView;
-
-	[MenuItem("Graph/Dialogue")]
-	public static void OpenDialogueGraphWindow()
-	{
-		DialogueGraphWindow window = GetWindow<DialogueGraphWindow>();
-        window.titleContent = new GUIContent("Dialogue");
-	}
-
-    private void OnEnable()
+    public class DialogueGraphWindow : EditorWindow
     {
-        CreateGraphView();
-        CreateToolBar();
-    }
+        private const string dialogueExtension = ".dialogue";
 
-    private void CreateGraphView(){
-        // create window
-        graphView = new DialogueGraphView(){
-            name = "Dialogue"
-        };
+        private DialogueGraphView graphView;
+        private string savePath;
 
-        graphView.StretchToParentSize();
+        [MenuItem("Graph/Dialogue")]
+        public static DialogueGraphWindow OpenDialogueGraphWindow()
+        {
+            DialogueGraphWindow window = GetWindow<DialogueGraphWindow>();
+            window.titleContent = new GUIContent("Dialogue");
 
-        // actually open window
-        rootVisualElement.Add(graphView);
-    }
+            return window;
+        }
 
-    private void CreateToolBar(){
-        Toolbar toolbar = new Toolbar();
 
-        var createNodeButton = new Button(() => {
-            graphView.CreateSpeechNode("new dialogue node");
-        });
-        createNodeButton.text = "CreateNodeButton";
-        toolbar.Add(createNodeButton);
+        [OnOpenAsset(1)]
+        public static bool OnOpenAsset(int instanceID, int line)
+        {
+            // check what asset was opened
+            string assetPath = AssetDatabase.GetAssetPath(instanceID);
+            string assetExtension = System.IO.Path.GetExtension(assetPath);
 
-        rootVisualElement.Add(toolbar);
-    }
+            // check if dialogue asset was opened
+            if (assetExtension == dialogueExtension)
+            {
+                // open editor window and make note of the loaded asset path
+                var window = OpenDialogueGraphWindow();
+                window.savePath = assetPath;
+                return true;
+            }
 
-    private void OnDisable()
-    {
-        // remove window
-        rootVisualElement.Remove(graphView);
+            return false;
+        }
+
+        private void OnEnable()
+        {
+            CreateGraphView();
+            CreateToolBar();
+        }
+
+        private void CreateGraphView()
+        {
+            // create window
+            graphView = new DialogueGraphView()
+            {
+                name = "Dialogue"
+            };
+
+            graphView.StretchToParentSize();
+
+            // actually open window
+            rootVisualElement.Add(graphView);
+        }
+
+        private void CreateToolBar()
+        {
+            Toolbar toolbar = new Toolbar();
+
+            // create speech node
+            var createSpeechNodeButton = new Button(() =>
+            {
+                graphView.CreateSpeechNode("New Speech Node");
+            });
+            createSpeechNodeButton.text = "Create Speech Node";
+            toolbar.Add(createSpeechNodeButton);
+
+            // create choice node
+            var createChoiceNodeButton = new Button(() =>
+            {
+                graphView.CreateChoiceNode("New Choice Node");
+            });
+            createChoiceNodeButton.text = "Create Choice Node";
+            toolbar.Add(createChoiceNodeButton);
+
+            rootVisualElement.Add(toolbar);
+        }
+
+        private void OnDisable()
+        {
+            // remove window
+            rootVisualElement.Remove(graphView);
+        }
     }
 }
