@@ -14,6 +14,8 @@ namespace DialogueSystem.Editor
 		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
 		public List<DialogueNode> dialogueNodes = new List<DialogueNode>();
 
+		public string savePath;
+
 		public DialogueGraphView()
 		{
 			// grid
@@ -37,10 +39,55 @@ namespace DialogueSystem.Editor
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
-			foreach (DialogueNode dialogueNode in dialogueNodes)
+			// check if any elements were deleted
+			if (change.elementsToRemove != null)
 			{
-				dialogueNode.OnGraphViewChanged(change);
+				foreach (var element in change.elementsToRemove)
+				{
+					// check if we have deleted a dialogue node
+					if (element is DialogueNode dialogueNode)
+					{
+						dialogueNode.OnRemoveNode();
+					}
+					// check if link broken
+					else if (element is Edge edge)
+					{
+						// check if link was from a dialogue node
+						if (edge.output.node is DialogueNode dialogueNode1)
+						{
+							dialogueNode1.OnRemoveLink(edge);
+						}
+					}
+				}
 			}
+
+			// check if any elements were moved
+			if (change.movedElements != null)
+			{
+				foreach (var element in change.movedElements)
+				{
+					// check if we moved a dialogue node
+					if (element is DialogueNode dialogueNode)
+					{
+						dialogueNode.OnMove();
+					}
+				}
+			}
+
+			// check if any edges created
+			if (change.edgesToCreate != null)
+			{
+				foreach (Edge edge in change.edgesToCreate)
+				{
+					// check if link is from a dialogue node
+					if (edge.output.node is DialogueNode dialogueNode)
+					{
+						dialogueNode.OnCreateLink(edge);
+					}
+				}
+			}
+
+			ConversationFileManager.SaveConversation(dialogueNodes, savePath);
 
 			return change;
 		}

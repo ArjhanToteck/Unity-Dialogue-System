@@ -9,12 +9,12 @@ namespace DialogueSystem.Editor
 {
     public static class ConversationFileManager
     {
-        public static void SaveConversation(DialogueGraphView graphView, string filePath)
+        public static void SaveConversation(List<DialogueNode> dialogueNodes, string filePath)
         {
             var conversation = ScriptableObject.CreateInstance<Conversation>();
 
             // loop through each node
-            foreach (DialogueNode dialogueNode in graphView.nodes)
+            foreach (DialogueNode dialogueNode in dialogueNodes)
             {
                 conversation.dialogue.Add(dialogueNode.dialogue);
             }

@@ -19,5 +19,21 @@ namespace DialogueSystem.Editor
 
             FinishCreatingNode();
         }
+
+        public override void OnCreateLink(Edge edge)
+        {
+            if (edge.output.portName == "Next")
+            {
+                ((EntryPoint)dialogue).nextLink = new NodeLinkData(edge);
+            }
+        }
+
+        public override void OnRemoveLink(Edge edge)
+        {
+            if (edge.output.portName == "Next")
+            {
+                ((EntryPoint)dialogue).nextLink = null;
+            }
+        }
     }
 }

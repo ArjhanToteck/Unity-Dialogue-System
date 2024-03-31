@@ -52,7 +52,8 @@ namespace DialogueSystem.Editor
             // create window
             graphView = new DialogueGraphView()
             {
-                name = "Dialogue"
+                name = "Dialogue",
+                savePath = savePath
             };
 
             graphView.StretchToParentSize();
@@ -80,14 +81,6 @@ namespace DialogueSystem.Editor
             });
             createChoiceNodeButton.text = "Create Choice Node";
             toolbar.Add(createChoiceNodeButton);
-
-            // save button
-            var saveButton = new Button(() =>
-            {
-                ConversationFileManager.SaveConversation(graphView, savePath);
-            });
-            saveButton.text = "Save";
-            toolbar.Add(saveButton);
 
             rootVisualElement.Add(toolbar);
         }

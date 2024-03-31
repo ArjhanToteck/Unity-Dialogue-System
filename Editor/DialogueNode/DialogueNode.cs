@@ -36,14 +36,24 @@ namespace DialogueSystem.Editor
             dialogue.nodeData.position = new float[2] { position.x, position.y };
         }
 
-        public void OnGraphViewChanged(GraphViewChange change)
+        public virtual void OnMove()
         {
-            // check if moved
-            if (change.movedElements.Contains(this))
-            {
-                // we need to update the Dialogue object to track the position change
-                SavePositionInDialogueObject();
-            }
+            SavePositionInDialogueObject();
+        }
+
+        public virtual void OnRemoveNode()
+        {
+            graphView.dialogueNodes.Remove(this);
+        }
+
+        public virtual void OnCreateLink(Edge edge)
+        {
+
+        }
+
+        public virtual void OnRemoveLink(Edge edge)
+        {
+
         }
 
         public Port CreatePort(Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)

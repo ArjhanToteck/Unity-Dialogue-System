@@ -17,5 +17,23 @@ namespace DialogueSystem.Editor
 
             FinishCreatingNode();
         }
+
+        public override void OnCreateLink(Edge edge)
+        {
+            Debug.Log(edge.output.portName);
+            // TODO: should probably introduce a constant for these port names?
+            if (edge.output.portName == "Next")
+            {
+                ((Speech)dialogue).nextLink = new NodeLinkData(edge);
+            }
+        }
+
+        public override void OnRemoveLink(Edge edge)
+        {
+            if (edge.output.portName == "Next")
+            {
+                ((Speech)dialogue).nextLink = null;
+            }
+        }
     }
 }

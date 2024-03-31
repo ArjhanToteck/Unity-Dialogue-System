@@ -9,6 +9,5 @@ namespace DialogueSystem
     {
         public string guid;
         public float[] position;
-        public List<NodeLinkData> links = new List<NodeLinkData>();
     }
 }

@@ -9,5 +9,6 @@ namespace DialogueSystem
     public class EntryPoint : Dialogue
     {
         public bool entryPoint = true;
+        public NodeLinkData nextLink = null;
     }
 }
