@@ -8,7 +8,7 @@ namespace DialogueSystem
     [Serializable]
     public class Choice : Dialogue
     {
-        public List<Option> options;
+        public List<Option> options = new List<Option>();
 
         public class Option
         {

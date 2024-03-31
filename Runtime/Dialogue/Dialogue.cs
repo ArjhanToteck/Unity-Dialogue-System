@@ -6,8 +6,8 @@ using UnityEngine;
 namespace DialogueSystem
 {
     [Serializable]
-    public class Dialogue
+    public abstract class Dialogue
     {
-        public NodeData nodeData;
+        public NodeData nodeData = new NodeData();
     }
 }

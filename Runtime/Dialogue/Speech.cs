@@ -10,6 +10,5 @@ namespace DialogueSystem
     {
         public string speakerName;
         public string speech;
-        public NodeLinkData link;
     }
 }

@@ -8,6 +8,6 @@ namespace DialogueSystem
     [Serializable]
     public class EntryPoint : Dialogue
     {
-        public NodeLinkData link;
+        public bool entryPoint = true;
     }
 }

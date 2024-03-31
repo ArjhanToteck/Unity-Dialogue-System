@@ -68,7 +68,7 @@ namespace DialogueSystem.Editor
             // create speech node
             var createSpeechNodeButton = new Button(() =>
             {
-                graphView.CreateSpeechNode("New Speech Node");
+                new SpeechNode(graphView);
             });
             createSpeechNodeButton.text = "Create Speech Node";
             toolbar.Add(createSpeechNodeButton);
@@ -76,7 +76,7 @@ namespace DialogueSystem.Editor
             // create choice node
             var createChoiceNodeButton = new Button(() =>
             {
-                graphView.CreateChoiceNode("New Choice Node");
+                new ChoiceNode(graphView);
             });
             createChoiceNodeButton.text = "Create Choice Node";
             toolbar.Add(createChoiceNodeButton);
