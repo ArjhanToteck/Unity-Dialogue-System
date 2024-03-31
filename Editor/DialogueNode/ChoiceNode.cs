@@ -22,7 +22,7 @@ namespace DialogueSystem.Editor
             addOptionButton.text = "Add Option";
             titleContainer.Add(addOptionButton);
 
-            SetToDefaultPosition();
+            FinishCreatingNode();
         }
 
         private void AddChoice()

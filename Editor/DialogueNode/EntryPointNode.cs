@@ -17,7 +17,7 @@ namespace DialogueSystem.Editor
 
             AddOutputPort();
 
-            SetToDefaultPosition();
+            FinishCreatingNode();
         }
     }
 }

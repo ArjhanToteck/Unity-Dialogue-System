@@ -11,6 +11,9 @@ namespace DialogueSystem.Editor
 {
 	public class DialogueGraphView : GraphView
 	{
+		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
+		public List<DialogueNode> dialogueNodes = new List<DialogueNode>();
+
 		public DialogueGraphView()
 		{
 			// grid
@@ -27,36 +30,19 @@ namespace DialogueSystem.Editor
 
 			// add entry point
 			new EntryPointNode(this);
+
+			// listen for changes
+			graphViewChanged = OnGraphViewChanged;
 		}
 
-		public void OnGraphViewChanged(GraphViewChange change)
+		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
-			/*// check if nodes have been moved
-			if (change.movedElements != null && change.movedElements.Count > 0)
+			foreach (DialogueNode dialogueNode in dialogueNodes)
 			{
-				foreach (DialogueNode movedNode in change.movedElements)
-				{
-					movedNode.dialogue.nodeData.position = Vector2.zero + movedNode.GetPosition().position;
-					Debug.Log(movedNode.dialogue.nodeData.position);
-				}
+				dialogueNode.OnGraphViewChanged(change);
 			}
 
-			// check if connections have been made or broken
-			if (change.edgesToCreate != null && change.edgesToCreate.Count > 0)
-			{
-				foreach (Edge edge in change.edgesToCreate)
-				{
-					NodeLinkData linkData = new NodeLinkData
-					{
-						portName = edge.input.portName,
-						connectedNodeGuid = ((DialogueNode)edge.output.node).guid
-					};
-
-					((DialogueNode)edge.input.node).dialogue.nodeData.links.Add(linkData);
-				}
-			}*/
-
-			// figure out how to check for broken connection
+			return change;
 		}
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

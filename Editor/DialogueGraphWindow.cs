@@ -84,7 +84,7 @@ namespace DialogueSystem.Editor
             // save button
             var saveButton = new Button(() =>
             {
-                ConversationSaveSystem.SaveConversation(graphView, savePath);
+                ConversationFileManager.SaveConversation(graphView, savePath);
             });
             saveButton.text = "Save";
             toolbar.Add(saveButton);

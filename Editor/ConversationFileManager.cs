@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DialogueSystem.Editor
 {
-    public static class ConversationSaveSystem
+    public static class ConversationFileManager
     {
         public static void SaveConversation(DialogueGraphView graphView, string filePath)
         {

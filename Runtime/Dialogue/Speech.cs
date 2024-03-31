@@ -8,7 +8,7 @@ namespace DialogueSystem
     [Serializable]
     public class Speech : Dialogue
     {
-        public string speakerName;
-        public string speech;
+        public string speakerName = "";
+        public string speech = "";
     }
 }

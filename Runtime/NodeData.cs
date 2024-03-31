@@ -8,7 +8,7 @@ namespace DialogueSystem
     public class NodeData
     {
         public string guid;
-        //public Vector2 position;
+        public float[] position;
         public List<NodeLinkData> links = new List<NodeLinkData>();
     }
 }

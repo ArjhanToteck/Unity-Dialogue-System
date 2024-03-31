@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Codice.Client.BaseCommands.Import;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -18,18 +19,31 @@ namespace DialogueSystem.Editor
         {
             title = nodeName;
             this.graphView = graphView;
-            this.graphView.AddElement(this);
         }
 
-        public void SetToDefaultPosition()
+        public void FinishCreatingNode()
         {
-            // place node at start position
             SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
+            SavePositionInDialogueObject();
+            graphView.AddElement(this);
+            graphView.dialogueNodes.Add(this);
+            dialogue.nodeData.guid = guid;
         }
 
-        public void UpdateDialogueObject()
+        public void SavePositionInDialogueObject()
         {
-            dialogue.nodeData.guid = guid;
+            Vector2 position = GetPosition().position;
+            dialogue.nodeData.position = new float[2] { position.x, position.y };
+        }
+
+        public void OnGraphViewChanged(GraphViewChange change)
+        {
+            // check if moved
+            if (change.movedElements.Contains(this))
+            {
+                // we need to update the Dialogue object to track the position change
+                SavePositionInDialogueObject();
+            }
         }
 
         public Port CreatePort(Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
