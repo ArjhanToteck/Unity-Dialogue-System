@@ -17,7 +17,7 @@ namespace DialogueSystem.Editor
 
             var addOptionButton = new Button(() =>
             {
-                AddChoice();
+                AddOption();
             });
             addOptionButton.text = "Add Option";
             titleContainer.Add(addOptionButton);
@@ -25,18 +25,54 @@ namespace DialogueSystem.Editor
             FinishCreatingNode();
         }
 
-        private void AddChoice()
+        private void AddOption()
         {
-            int choiceCount = outputContainer.Query("connector").ToList().Count;
+            int choiceCount = ((Choice)dialogue).options.Count;
 
-            Choice.Option option = new Choice.Option
+            // create option object and add to choice object
+            Option option = new Option
             {
                 option = "Option " + choiceCount
             };
-
-            AddOutputPort(option.option);
-
             ((Choice)dialogue).options.Add(option);
+
+            // create output port
+            Port outputPort = AddOutputPort(option.option);
+
+            // create link
+            option.link = NodeLinkData.FromPort(outputPort);
+        }
+
+        public override void OnCreateLink(Edge edge)
+        {
+            // loop through options
+            foreach (Option option in ((Choice)dialogue).options)
+            {
+                // check if option matches the new edge
+                if (option.link.portName == edge.output.portName)
+                {
+                    // set guid of connected node
+                    option.link.connectedNodeGuid = ((DialogueNode)edge.input.node).guid;
+
+                    break;
+                }
+            }
+        }
+
+        public override void OnRemoveLink(Edge edge)
+        {
+            // loop through options
+            foreach (Option option in ((Choice)dialogue).options)
+            {
+                // check if option matches the deleted edge
+                if (option.link.portName == edge.output.portName)
+                {
+                    // remove guid of connected node
+                    option.link.connectedNodeGuid = null;
+                }
+
+                break;
+            }
         }
     }
 }

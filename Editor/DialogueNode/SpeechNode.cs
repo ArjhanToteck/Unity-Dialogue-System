@@ -12,8 +12,12 @@ namespace DialogueSystem.Editor
         {
             dialogue = new Speech();
 
+            // add input and output ports
             AddInputPort();
-            AddOutputPort();
+            Port nextPort = AddOutputPort();
+
+            // create link data
+            ((Speech)dialogue).nextLink = NodeLinkData.FromPort(nextPort);
 
             FinishCreatingNode();
         }
@@ -24,7 +28,7 @@ namespace DialogueSystem.Editor
             // TODO: should probably introduce a constant for these port names?
             if (edge.output.portName == "Next")
             {
-                ((Speech)dialogue).nextLink = new NodeLinkData(edge);
+                ((Speech)dialogue).nextLink = NodeLinkData.FromEdge(edge);
             }
         }
 

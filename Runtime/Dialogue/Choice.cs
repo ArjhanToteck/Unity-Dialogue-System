@@ -5,15 +5,10 @@ using UnityEngine;
 
 namespace DialogueSystem
 {
+    // TODO: maybe rename as decision to avoid confusion with option objects?
     [Serializable]
-    public class Choice : Dialogue
+    public partial class Choice : Dialogue
     {
         public List<Option> options = new List<Option>();
-
-        public class Option
-        {
-            public string option;
-            public NodeLinkData link;
-        }
     }
 }

@@ -15,7 +15,10 @@ namespace DialogueSystem.Editor
             // entry node shouldn't be deletable
             capabilities &= ~Capabilities.Deletable;
 
-            AddOutputPort();
+            Port nextPort = AddOutputPort();
+
+            // create link data
+            ((EntryPoint)dialogue).nextLink = NodeLinkData.FromPort(nextPort);
 
             FinishCreatingNode();
         }
@@ -24,7 +27,7 @@ namespace DialogueSystem.Editor
         {
             if (edge.output.portName == "Next")
             {
-                ((EntryPoint)dialogue).nextLink = new NodeLinkData(edge);
+                ((EntryPoint)dialogue).nextLink = NodeLinkData.FromEdge(edge);
             }
         }
 

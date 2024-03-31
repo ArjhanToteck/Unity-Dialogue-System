@@ -35,6 +35,7 @@ namespace DialogueSystem.Editor
                 // open editor window and make note of the loaded asset path
                 var window = OpenDialogueGraphWindow();
                 window.savePath = assetPath;
+                window.graphView.savePath = assetPath;
                 return true;
             }
 

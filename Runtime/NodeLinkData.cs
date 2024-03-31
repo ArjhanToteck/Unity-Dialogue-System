@@ -1,5 +1,7 @@
 
 using System;
+using System.Linq;
+
 
 #if UNITY_EDITOR
 using DialogueSystem.Editor;
@@ -12,14 +14,40 @@ namespace DialogueSystem
     public class NodeLinkData
     {
         public string portName;
-
-        public string connectedNodeGuid;
+        public string connectedNodeGuid = null;
 
 #if UNITY_EDITOR
-        public NodeLinkData(Edge edge)
+        public static NodeLinkData FromEdge(Edge edge)
         {
-            portName = edge.input.portName;
-            connectedNodeGuid = ((DialogueNode)edge.output.node).guid;
+            NodeLinkData link = new NodeLinkData();
+
+            link.portName = edge.output.portName;
+
+            // make sure the link is connected to something
+            if (((DialogueNode)edge.input.node) != null)
+            {
+                // set connection
+                link.connectedNodeGuid = ((DialogueNode)edge.input.node).guid;
+            }
+
+            return link;
+        }
+
+        public static NodeLinkData FromPort(Port port)
+        {
+            // check if there is a link on the port
+            Edge edge = port.connections.FirstOrDefault();
+            if (edge != null)
+            {
+                return NodeLinkData.FromEdge(edge);
+            }
+
+            NodeLinkData link = new NodeLinkData
+            {
+                portName = port.portName
+            };
+
+            return link;
         }
 #endif
     }
