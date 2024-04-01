@@ -25,22 +25,41 @@ namespace DialogueSystem.Editor
             titleContainer.Add(addOptionButton);
         }
 
-        private void AddOption()
+        public override void LoadFromDialogue(Dialogue dialogue = null)
         {
-            int choiceCount = ((Choice)dialogue).options.Count;
+            base.LoadFromDialogue(dialogue);
 
-            // create option object and add to choice object
-            Option option = new Option
+            // add each option defined in the choice object
+            foreach (Option option in ((Choice)dialogue).options)
             {
-                option = "Option " + choiceCount
-            };
-            ((Choice)dialogue).options.Add(option);
+                AddOption(option);
+            }
+        }
+
+        private void AddOption(Option option = null)
+        {
+            // if no option is passed, we create a new one
+            if (option == null)
+            {
+                int choiceIndex = ((Choice)dialogue).options.Count;
+
+                // create option object and add to choice object
+                option = new Option
+                {
+                    option = "Option " + choiceIndex
+                };
+                ((Choice)dialogue).options.Add(option);
+
+                // update file
+                graphView.SaveConversation();
+            }
 
             // create output port
             Port outputPort = AddOutputPort(option.option);
 
             // create link
             option.link = NodeLinkData.FromPort(outputPort);
+
         }
 
         public override void OnCreateLink(Edge edge)

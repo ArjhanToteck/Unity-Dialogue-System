@@ -58,11 +58,7 @@ namespace DialogueSystem.Editor
 			AddElement(dialogueNode);
 			dialogueNodes.Add(dialogueNode);
 
-			// don't save anything if we're loading
-			if (!loadingFile)
-			{
-				ConversationFileManager.SaveConversation(dialogueNodes, savePath);
-			}
+			SaveConversation();
 		}
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -82,7 +78,6 @@ namespace DialogueSystem.Editor
 					if (element is DialogueNode dialogueNode)
 					{
 						dialogueNode.OnRemoveNode();
-						Debug.Log(dialogueNodes.Count);
 					}
 					// check if link broken
 					else if (element is Edge edge)
@@ -122,7 +117,7 @@ namespace DialogueSystem.Editor
 				}
 			}
 
-			ConversationFileManager.SaveConversation(dialogueNodes, savePath);
+			SaveConversation();
 
 			return change;
 		}
@@ -143,6 +138,15 @@ namespace DialogueSystem.Editor
 			}
 
 			return compatiblePorts;
+		}
+
+		public void SaveConversation()
+		{
+			// don't save anything if we're loading
+			if (!loadingFile)
+			{
+				ConversationFileManager.SaveConversation(dialogueNodes, savePath);
+			}
 		}
 	}
 }
