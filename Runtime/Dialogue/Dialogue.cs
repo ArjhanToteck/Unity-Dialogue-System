@@ -16,6 +16,9 @@ namespace DialogueSystem
 
     public abstract class Dialogue
     {
+        [NonSerialized]
+        public Conversation parentConversation;
+
         public NodeData nodeData = new NodeData();
 
         public Type GetAssociatedNodeType()

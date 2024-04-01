@@ -9,15 +9,21 @@ namespace DialogueSystem
 
     public class Conversation
     {
-        public List<Dialogue> dialogue = new List<Dialogue>();
+        public List<Dialogue> dialogues = new List<Dialogue>();
 
         public static Conversation DefaultConversation()
         {
             // create dialogue with entry point
             Conversation conversation = new Conversation();
-            conversation.dialogue.Add(new EntryPoint());
+            conversation.AddDialogue(new EntryPoint());
 
             return conversation;
+        }
+
+        public void AddDialogue(Dialogue dialogue)
+        {
+            dialogue.parentConversation = this;
+            dialogues.Add(dialogue);
         }
     }
 }

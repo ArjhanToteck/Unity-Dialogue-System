@@ -56,7 +56,7 @@ namespace DialogueSystem.Editor
             // loop through each node
             foreach (DialogueNode dialogueNode in dialogueNodes)
             {
-                conversation.dialogue.Add(dialogueNode.dialogue);
+                conversation.AddDialogue(dialogueNode.dialogue);
             }
 
             // save as conversation now
@@ -100,7 +100,7 @@ namespace DialogueSystem.Editor
             graphView.loadingFile = true;
 
             // loop through dialogue objects
-            foreach (Dialogue dialogue in conversation.dialogue)
+            foreach (Dialogue dialogue in conversation.dialogues)
             {
                 // get associated node type of object
                 Type nodeType = dialogue.GetAssociatedNodeType();

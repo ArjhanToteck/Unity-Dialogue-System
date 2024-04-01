@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Codice.Client.BaseCommands.Import;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -10,8 +9,8 @@ namespace DialogueSystem.Editor
     // TODO: refactor some of the methods here to go into the view class
     public abstract class DialogueNode : Node
     {
-        public const string previousPortName = "Previous";
-        public const string nextPortName = "Next";
+        protected const string previousPortName = "Previous";
+        protected const string nextPortName = "Next";
 
         public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
@@ -40,7 +39,7 @@ namespace DialogueSystem.Editor
 
         }
 
-        public Edge AddLinkFromNodeLinkData(NodeLinkData link)
+        protected Edge AddLinkFromNodeLinkData(NodeLinkData link)
         {
             if (link != null && link.connectedNodeGuid != null && link.inputPortName != null)
             {
