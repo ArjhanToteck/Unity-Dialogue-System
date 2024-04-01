@@ -10,11 +10,10 @@ using DialogueSystem.Editor;
 namespace DialogueSystem
 {
 #if UNITY_EDITOR
-    [AssociatedNode(typeof(ChoiceNode))]
+    [AssociatedNode(typeof(DecisionNode))]
 #endif
     [Serializable]
-    // TODO: maybe rename as decision to avoid confusion with option objects?
-    public partial class Choice : Dialogue
+    public partial class Decision : Dialogue
     {
         public List<Option> options = new List<Option>();
     }

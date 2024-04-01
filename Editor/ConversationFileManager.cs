@@ -20,6 +20,7 @@ namespace DialogueSystem.Editor
             TypeNameHandling = TypeNameHandling.Auto
         };
 
+        // handle creating conversation files in editor
         [MenuItem("Assets/Create/Dialogue System/Conversation")]
         public static void CreateConversationAsset()
         {
@@ -49,6 +50,28 @@ namespace DialogueSystem.Editor
             Selection.activeObject = conversationFile;
         }
 
+        // handle opening conversation files in editor
+        [OnOpenAsset(1)]
+        public static bool OnOpenAsset(int instanceID, int line)
+        {
+            // check what asset was opened
+            string assetPath = AssetDatabase.GetAssetPath(instanceID);
+
+            // check if dialogue asset was opened
+            if (assetPath.EndsWith(ConversationFileManager.conversationExtension))
+            {
+                // open editor window and make note of the loaded asset path
+                var window = ConversationEditorWindow.OpenConversationEditorWindow();
+                window.graphView.savePath = assetPath;
+
+                // load conversation
+                LoadConversation(window.graphView, assetPath);
+                return true;
+            }
+
+            return false;
+        }
+
         public static void SaveConversation(List<DialogueNode> dialogueNodes, string filePath)
         {
             var conversation = new Conversation();
@@ -69,35 +92,15 @@ namespace DialogueSystem.Editor
             File.WriteAllText(filePath, conversationJson);
         }
 
-        [OnOpenAsset(1)]
-        public static bool OnOpenAsset(int instanceID, int line)
-        {
-            // check what asset was opened
-            string assetPath = AssetDatabase.GetAssetPath(instanceID);
-
-            // check if dialogue asset was opened
-            if (assetPath.EndsWith(ConversationFileManager.conversationExtension))
-            {
-                // open editor window and make note of the loaded asset path
-                var window = DialogueGraphWindow.OpenDialogueGraphWindow();
-                window.graphView.savePath = assetPath;
-
-                // load conversation
-                LoadConversation(window.graphView, assetPath);
-                return true;
-            }
-
-            return false;
-        }
-
-        public static Conversation LoadConversation(DialogueGraphView graphView, string filePath)
+        public static Conversation LoadConversation(ConversationGraphView graphView, string filePath)
         {
             // deserialize conversation
             string json = File.ReadAllText(filePath);
             Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
 
-            // mark as loading
+            // mark as loading and clear
             graphView.loadingFile = true;
+            graphView.ClearGraphView();
 
             // loop through dialogue objects
             foreach (Dialogue dialogue in conversation.dialogues)

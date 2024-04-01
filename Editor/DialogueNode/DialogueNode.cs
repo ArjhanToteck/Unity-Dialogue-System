@@ -14,7 +14,7 @@ namespace DialogueSystem.Editor
 
         public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
-        public DialogueGraphView graphView;
+        public ConversationGraphView graphView;
 
         public DialogueNode()
         {

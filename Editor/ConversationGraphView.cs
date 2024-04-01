@@ -9,19 +9,19 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor
 {
-	public class DialogueGraphView : GraphView
+	public class ConversationGraphView : GraphView
 	{
 		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
 		public List<DialogueNode> dialogueNodes;
 		public string savePath;
 		public bool loadingFile = false;
 
-		public DialogueGraphView()
+		public ConversationGraphView()
 		{
 			ClearGraphView();
 
 			// grid
-			styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraph"));
+			styleSheets.Add(Resources.Load<StyleSheet>("ConversationGraphView"));
 			var grid = new GridBackground();
 			Insert(0, grid);
 			grid.StretchToParentSize();

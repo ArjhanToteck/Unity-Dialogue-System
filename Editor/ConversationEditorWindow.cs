@@ -9,17 +9,14 @@ using UnityEngine.UIElements;
 namespace DialogueSystem.Editor
 {
     // TODO: possibly rename to ConversationGraphWindow
-    public class DialogueGraphWindow : EditorWindow
+    public class ConversationEditorWindow : EditorWindow
     {
-        public DialogueGraphView graphView;
+        public ConversationGraphView graphView;
 
-        public static DialogueGraphWindow OpenDialogueGraphWindow()
+        public static ConversationEditorWindow OpenConversationEditorWindow()
         {
-            DialogueGraphWindow window = GetWindow<DialogueGraphWindow>();
-            window.titleContent = new GUIContent("Dialogue");
-
-            // clear old graph view
-            window.graphView.ClearGraphView();
+            ConversationEditorWindow window = GetWindow<ConversationEditorWindow>();
+            window.titleContent = new GUIContent("Conversation");
 
             return window;
         }
@@ -33,9 +30,9 @@ namespace DialogueSystem.Editor
         private void CreateGraphView()
         {
             // create view
-            graphView = new DialogueGraphView()
+            graphView = new ConversationGraphView()
             {
-                name = "Dialogue"
+                name = "Conversation"
             };
 
             graphView.StretchToParentSize();
@@ -59,7 +56,7 @@ namespace DialogueSystem.Editor
             // create choice node
             var createChoiceNodeButton = new Button(() =>
             {
-                graphView.AddDialogueNode(new ChoiceNode());
+                graphView.AddDialogueNode(new DecisionNode());
             })
             {
                 text = "Create Choice Node"
