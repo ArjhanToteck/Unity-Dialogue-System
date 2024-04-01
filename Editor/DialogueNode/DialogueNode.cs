@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
+    // TODO: refactor some of the methods here to go into the view class
     public abstract class DialogueNode : Node
     {
         public const string previousPortName = "Previous";
@@ -14,33 +15,47 @@ namespace DialogueSystem.Editor
         public static readonly Vector2 defaultNodeSize = new Vector2(150, 200);
         public static readonly Vector2 defaultNodePosition = new Vector2(100, 100);
 
-        public string guid;
+        public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
         public DialogueGraphView graphView;
 
         public DialogueNode()
         {
-            guid = Guid.NewGuid().ToString();
             SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
         }
 
-        public virtual void LoadFromDialogue(Dialogue dialogue = null)
+        public virtual void LoadNodeFromDialogue(Dialogue dialogue)
         {
-            this.dialogue = dialogue ?? this.dialogue;
+            // set dialogue
+            this.dialogue = dialogue;
 
+            // set guid
+            guid = dialogue.nodeData.guid;
+
+            // set position
             Vector2 position = new Vector2(this.dialogue.nodeData.position[0], this.dialogue.nodeData.position[1]);
             SetPosition(new Rect(position, defaultNodeSize));
+        }
+
+        public virtual void LoadLinksFromDialogue(Dialogue dialogue)
+        {
+
+        }
+
+        public Edge AddLinkFromNodeLinkData(NodeLinkData link)
+        {
+            if (link.connectedNodeGuid != null && link.inputPortName != null)
+            {
+                return graphView.LinkNodes(this, link.outputPortName, graphView.GetDialogueNodeByGuid(link.connectedNodeGuid), link.inputPortName);
+            }
+
+            return null;
         }
 
         public void UpdateDialogue(Dialogue dialogue)
         {
             this.dialogue = dialogue;
             dialogue.nodeData.guid = guid;
-            SavePositionInDialogue();
-        }
-
-        public virtual void OnMove()
-        {
             SavePositionInDialogue();
         }
 
@@ -53,6 +68,11 @@ namespace DialogueSystem.Editor
 
             Vector2 position = GetPosition().position;
             dialogue.nodeData.position = new float[2] { position.x, position.y };
+        }
+
+        public virtual void OnMove()
+        {
+            SavePositionInDialogue();
         }
 
         public virtual void OnRemoveNode()
@@ -97,5 +117,29 @@ namespace DialogueSystem.Editor
         {
             return AddPort(CreatePort(Direction.Output), portName);
         }
+
+        public Port FindPortByName(string portName)
+        {
+            // find the port with the specified name in input or output container
+
+            foreach (var port in inputContainer.Children())
+            {
+                if (port is Port && ((Port)port).portName == portName)
+                {
+                    return (Port)port;
+                }
+            }
+
+            foreach (var port in outputContainer.Children())
+            {
+                if (port is Port && ((Port)port).portName == portName)
+                {
+                    return (Port)port;
+                }
+            }
+
+            return null;
+        }
+
     }
 }

@@ -23,6 +23,14 @@ namespace DialogueSystem.Editor
             ((EntryPoint)dialogue).nextLink = NodeLinkData.FromPort(nextPort);
         }
 
+        public override void LoadLinksFromDialogue(Dialogue dialogue)
+        {
+            base.LoadLinksFromDialogue(dialogue);
+
+            // create link (doesn't do anything if not applicable)
+            AddLinkFromNodeLinkData(((EntryPoint)dialogue).nextLink);
+        }
+
         public override void OnCreateLink(Edge edge)
         {
             if (edge.output.portName == nextPortName)

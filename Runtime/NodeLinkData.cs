@@ -12,7 +12,8 @@ namespace DialogueSystem
     [Serializable]
     public class NodeLinkData
     {
-        public string portName;
+        public string outputPortName;
+        public string inputPortName = null;
         public string connectedNodeGuid = null;
 
 #if UNITY_EDITOR
@@ -20,15 +21,10 @@ namespace DialogueSystem
         {
             NodeLinkData link = new NodeLinkData
             {
-                portName = edge.output.portName
+                outputPortName = edge.output.portName,
+                inputPortName = edge.input.portName,
+                connectedNodeGuid = ((DialogueNode)edge.input.node).guid
             };
-
-            // make sure the link is connected to something
-            if (((DialogueNode)edge.input.node) != null)
-            {
-                // set connection
-                link.connectedNodeGuid = ((DialogueNode)edge.input.node).guid;
-            }
 
             return link;
         }
@@ -39,12 +35,12 @@ namespace DialogueSystem
             Edge edge = port.connections.FirstOrDefault();
             if (edge != null)
             {
-                return NodeLinkData.FromEdge(edge);
+                return FromEdge(edge);
             }
 
             NodeLinkData link = new NodeLinkData
             {
-                portName = port.portName
+                outputPortName = port.portName
             };
 
             return link;

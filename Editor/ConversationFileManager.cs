@@ -48,10 +48,17 @@ namespace DialogueSystem.Editor
 
                 // create node and load data from dialogue
                 DialogueNode dialogueNode = (DialogueNode)Activator.CreateInstance(nodeType);
-                dialogueNode.LoadFromDialogue(dialogue);
+                dialogueNode.graphView = graphView;
+                dialogueNode.LoadNodeFromDialogue(dialogue);
 
                 // add to graph view
                 graphView.AddDialogueNode(dialogueNode);
+            }
+
+            // loop through dialogue objects again (we need to load links now)
+            foreach (DialogueNode dialogueNode in graphView.dialogueNodes)
+            {
+                dialogueNode.LoadLinksFromDialogue(dialogueNode.dialogue);
             }
 
             // mark as no longer loading

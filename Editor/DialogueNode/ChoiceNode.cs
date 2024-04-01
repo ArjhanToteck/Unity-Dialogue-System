@@ -25,14 +25,26 @@ namespace DialogueSystem.Editor
             titleContainer.Add(addOptionButton);
         }
 
-        public override void LoadFromDialogue(Dialogue dialogue = null)
+        public override void LoadNodeFromDialogue(Dialogue dialogue = null)
         {
-            base.LoadFromDialogue(dialogue);
+            base.LoadNodeFromDialogue(dialogue);
 
             // add each option defined in the choice object
             foreach (Option option in ((Choice)dialogue).options)
             {
                 AddOption(option);
+            }
+        }
+
+        public override void LoadLinksFromDialogue(Dialogue dialogue)
+        {
+            base.LoadLinksFromDialogue(dialogue);
+
+            // add each option defined in the choice object
+            foreach (Option option in ((Choice)dialogue).options)
+            {
+                // create link (doesn't do anything if not applicable)
+                AddLinkFromNodeLinkData(option.link);
             }
         }
 
@@ -50,16 +62,20 @@ namespace DialogueSystem.Editor
                 };
                 ((Choice)dialogue).options.Add(option);
 
+                // create output port
+                Port outputPort = AddOutputPort(option.option);
+
+                // create link
+                option.link = NodeLinkData.FromPort(outputPort);
+
                 // update file
                 graphView.SaveConversation();
             }
-
-            // create output port
-            Port outputPort = AddOutputPort(option.option);
-
-            // create link
-            option.link = NodeLinkData.FromPort(outputPort);
-
+            else
+            {
+                // create output port
+                AddOutputPort(option.option);
+            }
         }
 
         public override void OnCreateLink(Edge edge)
@@ -68,10 +84,11 @@ namespace DialogueSystem.Editor
             foreach (Option option in ((Choice)dialogue).options)
             {
                 // check if option matches the new edge
-                if (option.link.portName == edge.output.portName)
+                if (option.link.outputPortName == edge.output.portName)
                 {
                     // set guid of connected node
                     option.link.connectedNodeGuid = ((DialogueNode)edge.input.node).guid;
+                    option.link.inputPortName = edge.input.portName;
 
                     break;
                 }
@@ -84,7 +101,7 @@ namespace DialogueSystem.Editor
             foreach (Option option in ((Choice)dialogue).options)
             {
                 // check if option matches the deleted edge
-                if (option.link.portName == edge.output.portName)
+                if (option.link.outputPortName == edge.output.portName)
                 {
                     // remove guid of connected node
                     option.link.connectedNodeGuid = null;

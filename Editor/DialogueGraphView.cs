@@ -36,32 +36,6 @@ namespace DialogueSystem.Editor
 			graphViewChanged = OnGraphViewChanged;
 		}
 
-		public void ClearGraphView()
-		{
-			// reset nodes list
-			dialogueNodes = new List<DialogueNode>();
-
-			// remove all nodes
-			foreach (var node in nodes.ToList())
-			{
-				RemoveElement(node);
-			}
-
-			// remove all edges
-			foreach (var edge in edges.ToList())
-			{
-				RemoveElement(edge);
-			}
-		}
-
-		public void AddDialogueNode(DialogueNode dialogueNode)
-		{
-			dialogueNode.graphView = this;
-			AddElement(dialogueNode);
-			dialogueNodes.Add(dialogueNode);
-
-			SaveConversation();
-		}
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
@@ -124,6 +98,38 @@ namespace DialogueSystem.Editor
 			return change;
 		}
 
+		public void ClearGraphView()
+		{
+			// reset nodes list
+			dialogueNodes = new List<DialogueNode>();
+
+			// remove all nodes
+			foreach (var node in nodes.ToList())
+			{
+				RemoveElement(node);
+			}
+
+			// remove all edges
+			foreach (var edge in edges.ToList())
+			{
+				RemoveElement(edge);
+			}
+		}
+
+		public void AddDialogueNode(DialogueNode dialogueNode)
+		{
+			dialogueNode.graphView = this;
+			AddElement(dialogueNode);
+			dialogueNodes.Add(dialogueNode);
+
+			SaveConversation();
+		}
+
+		public DialogueNode GetDialogueNodeByGuid(string guid)
+		{
+			return dialogueNodes.Find(node => node.guid == guid);
+		}
+
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
 		{
 			var compatiblePorts = new List<Port>();
@@ -140,6 +146,31 @@ namespace DialogueSystem.Editor
 			}
 
 			return compatiblePorts;
+		}
+
+		public Edge LinkNodes(DialogueNode outputNode, string outputPortName, DialogueNode inputNode, string inputPortName)
+		{
+			// find output port
+			Port outputPort = outputNode.FindPortByName(outputPortName);
+
+			// find input port
+			Port inputPort = inputNode.FindPortByName(inputPortName);
+
+			// create edge between ports
+			Edge edge = new Edge
+			{
+				output = outputPort,
+				input = inputPort,
+			};
+
+			// actually connect
+			edge.input.Connect(edge);
+			edge.output.Connect(edge);
+
+			// add connection as element
+			AddElement(edge);
+
+			return edge;
 		}
 
 		public void SaveConversation()
