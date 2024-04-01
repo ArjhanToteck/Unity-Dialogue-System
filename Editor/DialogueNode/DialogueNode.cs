@@ -12,8 +12,6 @@ namespace DialogueSystem.Editor
     {
         public const string previousPortName = "Previous";
         public const string nextPortName = "Next";
-        public static readonly Vector2 defaultNodeSize = new Vector2(150, 200);
-        public static readonly Vector2 defaultNodePosition = new Vector2(100, 100);
 
         public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
@@ -21,7 +19,7 @@ namespace DialogueSystem.Editor
 
         public DialogueNode()
         {
-            SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
+            SetPosition(new Rect(NodeData.defaultPosition, NodeData.defaultSize));
         }
 
         public virtual void LoadNodeFromDialogue(Dialogue dialogue)
@@ -34,7 +32,7 @@ namespace DialogueSystem.Editor
 
             // set position
             Vector2 position = new Vector2(this.dialogue.nodeData.position[0], this.dialogue.nodeData.position[1]);
-            SetPosition(new Rect(position, defaultNodeSize));
+            SetPosition(new Rect(position, NodeData.defaultSize));
         }
 
         public virtual void LoadLinksFromDialogue(Dialogue dialogue)
@@ -44,7 +42,7 @@ namespace DialogueSystem.Editor
 
         public Edge AddLinkFromNodeLinkData(NodeLinkData link)
         {
-            if (link.connectedNodeGuid != null && link.inputPortName != null)
+            if (link != null && link.connectedNodeGuid != null && link.inputPortName != null)
             {
                 return graphView.LinkNodes(this, link.outputPortName, graphView.GetDialogueNodeByGuid(link.connectedNodeGuid), link.inputPortName);
             }

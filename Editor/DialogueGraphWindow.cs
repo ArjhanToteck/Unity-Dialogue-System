@@ -8,44 +8,20 @@ using UnityEngine;
 using UnityEngine.UIElements;
 namespace DialogueSystem.Editor
 {
+    // TODO: possibly rename to ConversationGraphWindow
     public class DialogueGraphWindow : EditorWindow
     {
-        private const string dialogueExtension = ".conversation";
-
-        private DialogueGraphView graphView;
-        private string savePath;
+        public DialogueGraphView graphView;
 
         public static DialogueGraphWindow OpenDialogueGraphWindow()
         {
             DialogueGraphWindow window = GetWindow<DialogueGraphWindow>();
             window.titleContent = new GUIContent("Dialogue");
 
+            // clear old graph view
+            window.graphView.ClearGraphView();
+
             return window;
-        }
-
-        [OnOpenAsset(1)]
-        public static bool OnOpenAsset(int instanceID, int line)
-        {
-            // check what asset was opened
-            string assetPath = AssetDatabase.GetAssetPath(instanceID);
-
-            // check if dialogue asset was opened
-            if (assetPath.EndsWith(dialogueExtension))
-            {
-                // open editor window and make note of the loaded asset path
-                var window = OpenDialogueGraphWindow();
-                window.savePath = assetPath;
-                window.graphView.savePath = assetPath;
-
-                // clear old graph view
-                window.graphView.ClearGraphView();
-
-                // load conversation
-                ConversationFileManager.LoadConversation(window.graphView, window.savePath);
-                return true;
-            }
-
-            return false;
         }
 
         private void OnEnable()
