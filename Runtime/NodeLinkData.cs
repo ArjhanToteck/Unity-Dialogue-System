@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 
-
 #if UNITY_EDITOR
 using DialogueSystem.Editor;
 using UnityEditor.Experimental.GraphView;
@@ -19,9 +18,10 @@ namespace DialogueSystem
 #if UNITY_EDITOR
         public static NodeLinkData FromEdge(Edge edge)
         {
-            NodeLinkData link = new NodeLinkData();
-
-            link.portName = edge.output.portName;
+            NodeLinkData link = new NodeLinkData
+            {
+                portName = edge.output.portName
+            };
 
             // make sure the link is connected to something
             if (((DialogueNode)edge.input.node) != null)

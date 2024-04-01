@@ -9,9 +9,11 @@ namespace DialogueSystem.Editor
 {
     public class ChoiceNode : DialogueNode
     {
-        public ChoiceNode(DialogueGraphView graphView, string nodeName = "New Choice Node") : base(graphView, nodeName)
+        public ChoiceNode()
         {
-            dialogue = new Choice();
+            UpdateDialogue(new Choice());
+
+            title = "Choice";
 
             AddInputPort();
 
@@ -21,8 +23,6 @@ namespace DialogueSystem.Editor
             });
             addOptionButton.text = "Add Option";
             titleContainer.Add(addOptionButton);
-
-            FinishCreatingNode();
         }
 
         private void AddOption()

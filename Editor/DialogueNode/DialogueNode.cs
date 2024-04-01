@@ -9,36 +9,50 @@ namespace DialogueSystem.Editor
 {
     public abstract class DialogueNode : Node
     {
+        public const string previousPortName = "Previous";
+        public const string nextPortName = "Next";
         public static readonly Vector2 defaultNodeSize = new Vector2(150, 200);
         public static readonly Vector2 defaultNodePosition = new Vector2(100, 100);
-        public string guid = Guid.NewGuid().ToString();
+
+        public string guid;
         public Dialogue dialogue;
         public DialogueGraphView graphView;
 
-        public DialogueNode(DialogueGraphView graphView, string nodeName = "New Choice Node")
+        public DialogueNode()
         {
-            title = nodeName;
-            this.graphView = graphView;
-        }
-
-        public void FinishCreatingNode()
-        {
+            guid = Guid.NewGuid().ToString();
             SetPosition(new Rect(defaultNodePosition, defaultNodeSize));
-            SavePositionInDialogueObject();
-            graphView.AddElement(this);
-            graphView.dialogueNodes.Add(this);
-            dialogue.nodeData.guid = guid;
         }
 
-        public void SavePositionInDialogueObject()
+        public virtual void LoadFromDialogue(Dialogue dialogue = null)
         {
-            Vector2 position = GetPosition().position;
-            dialogue.nodeData.position = new float[2] { position.x, position.y };
+            this.dialogue = dialogue ?? this.dialogue;
+
+            Vector2 position = new Vector2(this.dialogue.nodeData.position[0], this.dialogue.nodeData.position[1]);
+            SetPosition(new Rect(position, defaultNodeSize));
+        }
+
+        public void UpdateDialogue(Dialogue dialogue)
+        {
+            this.dialogue = dialogue;
+            dialogue.nodeData.guid = guid;
+            SavePositionInDialogue();
         }
 
         public virtual void OnMove()
         {
-            SavePositionInDialogueObject();
+            SavePositionInDialogue();
+        }
+
+        public void SavePositionInDialogue()
+        {
+            if (dialogue == null)
+            {
+                return;
+            }
+
+            Vector2 position = GetPosition().position;
+            dialogue.nodeData.position = new float[2] { position.x, position.y };
         }
 
         public virtual void OnRemoveNode()
@@ -74,12 +88,12 @@ namespace DialogueSystem.Editor
             return port;
         }
 
-        public Port AddInputPort(string portName = "Previous")
+        public Port AddInputPort(string portName = previousPortName)
         {
             return AddPort(CreatePort(Direction.Input, Port.Capacity.Multi), portName);
         }
 
-        public Port AddOutputPort(string portName = "Next")
+        public Port AddOutputPort(string portName = nextPortName)
         {
             return AddPort(CreatePort(Direction.Output), portName);
         }

@@ -36,6 +36,12 @@ namespace DialogueSystem.Editor
                 var window = OpenDialogueGraphWindow();
                 window.savePath = assetPath;
                 window.graphView.savePath = assetPath;
+
+                // clear old graph view
+                window.graphView.ClearGraphView();
+
+                // load conversation
+                ConversationFileManager.LoadConversation(window.graphView, window.savePath);
                 return true;
             }
 
@@ -50,16 +56,15 @@ namespace DialogueSystem.Editor
 
         private void CreateGraphView()
         {
-            // create window
+            // create view
             graphView = new DialogueGraphView()
             {
-                name = "Dialogue",
-                savePath = savePath
+                name = "Dialogue"
             };
 
             graphView.StretchToParentSize();
 
-            // actually open window
+            // actually display view
             rootVisualElement.Add(graphView);
         }
 
@@ -70,7 +75,7 @@ namespace DialogueSystem.Editor
             // create speech node
             var createSpeechNodeButton = new Button(() =>
             {
-                new SpeechNode(graphView);
+                graphView.AddDialogueNode(new SpeechNode());
             });
             createSpeechNodeButton.text = "Create Speech Node";
             toolbar.Add(createSpeechNodeButton);
@@ -78,9 +83,11 @@ namespace DialogueSystem.Editor
             // create choice node
             var createChoiceNodeButton = new Button(() =>
             {
-                new ChoiceNode(graphView);
-            });
-            createChoiceNodeButton.text = "Create Choice Node";
+                graphView.AddDialogueNode(new ChoiceNode());
+            })
+            {
+                text = "Create Choice Node"
+            };
             toolbar.Add(createChoiceNodeButton);
 
             rootVisualElement.Add(toolbar);

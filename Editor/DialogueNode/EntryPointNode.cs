@@ -8,9 +8,11 @@ namespace DialogueSystem.Editor
 {
     public class EntryPointNode : DialogueNode
     {
-        public EntryPointNode(DialogueGraphView graphView, string nodeName = "Entry") : base(graphView, nodeName)
+        public EntryPointNode()
         {
-            dialogue = new EntryPoint();
+            UpdateDialogue(new EntryPoint());
+
+            title = "Entry Point";
 
             // entry node shouldn't be deletable
             capabilities &= ~Capabilities.Deletable;
@@ -19,13 +21,11 @@ namespace DialogueSystem.Editor
 
             // create link data
             ((EntryPoint)dialogue).nextLink = NodeLinkData.FromPort(nextPort);
-
-            FinishCreatingNode();
         }
 
         public override void OnCreateLink(Edge edge)
         {
-            if (edge.output.portName == "Next")
+            if (edge.output.portName == nextPortName)
             {
                 ((EntryPoint)dialogue).nextLink = NodeLinkData.FromEdge(edge);
             }
@@ -33,7 +33,7 @@ namespace DialogueSystem.Editor
 
         public override void OnRemoveLink(Edge edge)
         {
-            if (edge.output.portName == "Next")
+            if (edge.output.portName == nextPortName)
             {
                 ((EntryPoint)dialogue).nextLink = null;
             }

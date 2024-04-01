@@ -8,9 +8,11 @@ namespace DialogueSystem.Editor
 {
     public class SpeechNode : DialogueNode
     {
-        public SpeechNode(DialogueGraphView graphView, string nodeName = "New Speech Node") : base(graphView, nodeName)
+        public SpeechNode()
         {
-            dialogue = new Speech();
+            UpdateDialogue(new Speech());
+
+            title = "Speech";
 
             // add input and output ports
             AddInputPort();
@@ -18,15 +20,11 @@ namespace DialogueSystem.Editor
 
             // create link data
             ((Speech)dialogue).nextLink = NodeLinkData.FromPort(nextPort);
-
-            FinishCreatingNode();
         }
 
         public override void OnCreateLink(Edge edge)
         {
-            Debug.Log(edge.output.portName);
-            // TODO: should probably introduce a constant for these port names?
-            if (edge.output.portName == "Next")
+            if (edge.output.portName == nextPortName)
             {
                 ((Speech)dialogue).nextLink = NodeLinkData.FromEdge(edge);
             }
@@ -34,7 +32,7 @@ namespace DialogueSystem.Editor
 
         public override void OnRemoveLink(Edge edge)
         {
-            if (edge.output.portName == "Next")
+            if (edge.output.portName == nextPortName)
             {
                 ((Speech)dialogue).nextLink = null;
             }

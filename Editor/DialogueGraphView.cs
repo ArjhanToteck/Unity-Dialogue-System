@@ -31,10 +31,32 @@ namespace DialogueSystem.Editor
 			this.AddManipulator(new RectangleSelector());
 
 			// add entry point
-			new EntryPointNode(this);
+			//AddDialogueNode(new EntryPointNode());
 
 			// listen for changes
 			graphViewChanged = OnGraphViewChanged;
+		}
+
+		public void ClearGraphView()
+		{
+			// Remove all nodes from the GraphView
+			foreach (var node in nodes.ToList())
+			{
+				RemoveElement(node);
+			}
+
+			// Remove all edges from the GraphView
+			foreach (var edge in edges.ToList())
+			{
+				RemoveElement(edge);
+			}
+		}
+
+		public void AddDialogueNode(DialogueNode dialogueNode)
+		{
+			dialogueNode.graphView = this;
+			AddElement(dialogueNode);
+			dialogueNodes.Add(dialogueNode);
 		}
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
