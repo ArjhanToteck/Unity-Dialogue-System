@@ -11,22 +11,38 @@ namespace DialogueSystem.Editor
 {
 	public class ConversationGraphView : GraphView
 	{
+		public ConversationEditorWindow window;
 		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
 		public List<DialogueNode> dialogueNodes;
-		public string savePath;
-		public bool loadingFile = false;
+		public bool doneLoadingFile = false;
+		private Label defaultMessage;
 
 		public ConversationGraphView()
 		{
-			ClearGraphView();
-
 			// grid
 			styleSheets.Add(Resources.Load<StyleSheet>("ConversationGraphView"));
 			var grid = new GridBackground();
 			Insert(0, grid);
 			grid.StretchToParentSize();
 
-			// zoom and selection
+			// create default message
+			defaultMessage = new Label("No conversation object selected.");
+			defaultMessage.style.fontSize = 20;
+			defaultMessage.style.unityTextAlign = TextAnchor.MiddleCenter;
+			defaultMessage.StretchToParentSize();
+			Add(defaultMessage);
+		}
+
+		public void OnFinishedLoading()
+		{
+			// remove message label
+			if (defaultMessage != null)
+			{
+				Remove(defaultMessage);
+				defaultMessage = null;
+			}
+
+			// add zoom and selection
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 			this.AddManipulator(new ContentDragger());
 			this.AddManipulator(new SelectionDragger());
@@ -36,11 +52,10 @@ namespace DialogueSystem.Editor
 			graphViewChanged = OnGraphViewChanged;
 		}
 
-
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
 			// don't save anything if we're currently loading
-			if (loadingFile)
+			if (!doneLoadingFile)
 			{
 				return change;
 			}
@@ -176,10 +191,12 @@ namespace DialogueSystem.Editor
 		public void SaveConversation()
 		{
 			// don't save anything if we're loading
-			if (!loadingFile)
+			if (!doneLoadingFile)
 			{
-				ConversationFileManager.SaveConversation(dialogueNodes, savePath);
+				return;
 			}
+
+			ConversationFileManager.SaveConversation(dialogueNodes, window.savePath);
 		}
 	}
 }

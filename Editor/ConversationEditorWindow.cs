@@ -12,7 +12,9 @@ namespace DialogueSystem.Editor
     public class ConversationEditorWindow : EditorWindow
     {
         public ConversationGraphView graphView;
+        public string savePath;
 
+        [MenuItem("Window/Dialogue System/Conversation")]
         public static ConversationEditorWindow OpenConversationEditorWindow()
         {
             ConversationEditorWindow window = GetWindow<ConversationEditorWindow>();
@@ -23,16 +25,29 @@ namespace DialogueSystem.Editor
 
         private void OnEnable()
         {
-            CreateGraphView();
+            AddGraphView();
             CreateToolBar();
+
+            // check if we have a file path, but not loaded yet (this happens on recompile, for example)
+            if (!graphView.doneLoadingFile && savePath != null)
+            {
+                ConversationFileManager.LoadConversation(graphView, savePath);
+            }
         }
 
-        private void CreateGraphView()
+        private void OnDisable()
+        {
+            // remove window
+            rootVisualElement.Remove(graphView);
+        }
+
+        private void AddGraphView()
         {
             // create view
             graphView = new ConversationGraphView()
             {
-                name = "Conversation"
+                name = "Conversation",
+                window = this
             };
 
             graphView.StretchToParentSize();
@@ -64,12 +79,6 @@ namespace DialogueSystem.Editor
             toolbar.Add(createChoiceNodeButton);
 
             rootVisualElement.Add(toolbar);
-        }
-
-        private void OnDisable()
-        {
-            // remove window
-            rootVisualElement.Remove(graphView);
         }
     }
 }

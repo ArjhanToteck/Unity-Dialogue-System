@@ -62,7 +62,7 @@ namespace DialogueSystem.Editor
             {
                 // open editor window and make note of the loaded asset path
                 var window = ConversationEditorWindow.OpenConversationEditorWindow();
-                window.graphView.savePath = assetPath;
+                window.savePath = assetPath;
 
                 // load conversation
                 LoadConversation(window.graphView, assetPath);
@@ -99,7 +99,7 @@ namespace DialogueSystem.Editor
             Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
 
             // mark as loading and clear
-            graphView.loadingFile = true;
+            graphView.doneLoadingFile = false;
             graphView.ClearGraphView();
 
             // loop through dialogue objects
@@ -124,7 +124,8 @@ namespace DialogueSystem.Editor
             }
 
             // mark as no longer loading
-            graphView.loadingFile = false;
+            graphView.doneLoadingFile = true;
+            graphView.OnFinishedLoading();
 
             return conversation;
         }
