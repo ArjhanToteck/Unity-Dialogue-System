@@ -18,6 +18,8 @@ namespace DialogueSystem.Editor
 
 		public DialogueGraphView()
 		{
+			ClearGraphView();
+
 			// grid
 			styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraph"));
 			var grid = new GridBackground();
@@ -30,22 +32,22 @@ namespace DialogueSystem.Editor
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
 
-			// reset nodes list
-			dialogueNodes = new List<DialogueNode>();
-
 			// listen for changes
 			graphViewChanged = OnGraphViewChanged;
 		}
 
 		public void ClearGraphView()
 		{
-			// Remove all nodes from the GraphView
+			// reset nodes list
+			dialogueNodes = new List<DialogueNode>();
+
+			// remove all nodes
 			foreach (var node in nodes.ToList())
 			{
 				RemoveElement(node);
 			}
 
-			// Remove all edges from the GraphView
+			// remove all edges
 			foreach (var edge in edges.ToList())
 			{
 				RemoveElement(edge);
