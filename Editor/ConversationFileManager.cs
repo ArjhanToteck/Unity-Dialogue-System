@@ -37,6 +37,9 @@ namespace DialogueSystem.Editor
             string json = File.ReadAllText(filePath);
             Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
 
+            // mark as loading
+            graphView.loadingFile = true;
+
             // loop through dialogue objects
             foreach (Dialogue dialogue in conversation.dialogue)
             {
@@ -50,6 +53,9 @@ namespace DialogueSystem.Editor
                 // add to graph view
                 graphView.AddDialogueNode(dialogueNode);
             }
+
+            // mark as no longer loading
+            graphView.loadingFile = false;
 
             return conversation;
         }

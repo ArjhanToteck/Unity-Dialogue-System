@@ -12,9 +12,9 @@ namespace DialogueSystem.Editor
 	public class DialogueGraphView : GraphView
 	{
 		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
-		public List<DialogueNode> dialogueNodes = new List<DialogueNode>();
-
+		public List<DialogueNode> dialogueNodes;
 		public string savePath;
+		public bool loadingFile = false;
 
 		public DialogueGraphView()
 		{
@@ -30,8 +30,8 @@ namespace DialogueSystem.Editor
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
 
-			// add entry point
-			//AddDialogueNode(new EntryPointNode());
+			// reset nodes list
+			dialogueNodes = new List<DialogueNode>();
 
 			// listen for changes
 			graphViewChanged = OnGraphViewChanged;
@@ -57,10 +57,22 @@ namespace DialogueSystem.Editor
 			dialogueNode.graphView = this;
 			AddElement(dialogueNode);
 			dialogueNodes.Add(dialogueNode);
+
+			// don't save anything if we're loading
+			if (!loadingFile)
+			{
+				ConversationFileManager.SaveConversation(dialogueNodes, savePath);
+			}
 		}
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
+			// don't save anything if we're currently loading
+			if (loadingFile)
+			{
+				return change;
+			}
+
 			// check if any elements were deleted
 			if (change.elementsToRemove != null)
 			{
@@ -70,6 +82,7 @@ namespace DialogueSystem.Editor
 					if (element is DialogueNode dialogueNode)
 					{
 						dialogueNode.OnRemoveNode();
+						Debug.Log(dialogueNodes.Count);
 					}
 					// check if link broken
 					else if (element is Edge edge)
