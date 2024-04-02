@@ -24,7 +24,7 @@ namespace DialogueSystem
         public Type GetAssociatedNodeType()
         {
             var dialogueType = GetType();
-            var attribute = (AssociatedNode)Attribute.GetCustomAttribute(dialogueType, typeof(AssociatedNode));
+            var attribute = (AssociatedNodeAttribute)Attribute.GetCustomAttribute(dialogueType, typeof(AssociatedNodeAttribute));
             return attribute?.NodeType;
         }
     }

@@ -4,11 +4,11 @@ using System;
 namespace DialogueSystem.Editor
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class AssociatedNode : Attribute
+    public class AssociatedNodeAttribute : Attribute
     {
         public Type NodeType { get; }
 
-        public AssociatedNode(Type nodeType)
+        public AssociatedNodeAttribute(Type nodeType)
         {
             NodeType = nodeType;
         }
