@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor
 {
@@ -18,6 +19,7 @@ namespace DialogueSystem.Editor
         public DialogueNode()
         {
             SetPosition(new Rect(NodeData.defaultPosition, NodeData.defaultSize));
+            contentContainer.style.backgroundColor = new Color(0.35f, 0.35f, 0.35f, 0.75f);
         }
 
         public virtual void LoadNodeFromDialogue(Dialogue dialogue)
@@ -86,16 +88,31 @@ namespace DialogueSystem.Editor
 
         }
 
+        public VisualElement AddSpacer(VisualElement parent = null)
+        {
+            parent = parent ?? contentContainer;
+
+            VisualElement spacer = new VisualElement();
+            spacer.style.backgroundColor = new StyleColor(Color.black);
+            spacer.style.height = 1;
+            spacer.style.marginBottom = 5;
+            parent.Add(spacer);
+
+            return spacer;
+        }
+
         public Port CreatePort(Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
         {
             return InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
         }
 
-        public Port AddPort(Port port, string portName)
+        public Port AddPort(Port port, string portName, VisualElement parent = null)
         {
+            parent = parent ?? contentContainer;
+
             // create and add
             port.portName = portName;
-            inputContainer.Add(port);
+            parent.Add(port);
 
             // refresh
             RefreshExpandedState();
@@ -104,38 +121,54 @@ namespace DialogueSystem.Editor
             return port;
         }
 
-        public Port AddInputPort(string portName = previousPortName)
+        public Port AddInputPort(string portName = previousPortName, VisualElement parent = null)
         {
-            return AddPort(CreatePort(Direction.Input, Port.Capacity.Multi), portName);
+            return AddPort(CreatePort(Direction.Input, Port.Capacity.Multi), portName, parent);
         }
 
-        public Port AddOutputPort(string portName = nextPortName)
+        public Port AddOutputPort(string portName = nextPortName, VisualElement parent = null)
         {
-            return AddPort(CreatePort(Direction.Output), portName);
+            return AddPort(CreatePort(Direction.Output), portName, parent);
         }
 
-        public Port FindPortByName(string portName)
+        public Port FindPortByName(string portName, VisualElement parent = null)
         {
-            // find the port with the specified name in input or output container
+            parent = parent ?? contentContainer;
 
-            foreach (var port in inputContainer.Children())
+            foreach (var element in parent.Children())
             {
-                if (port is Port && ((Port)port).portName == portName)
+                if (element is Port port && port.portName == portName)
                 {
-                    return (Port)port;
+                    return port;
                 }
-            }
 
-            foreach (var port in outputContainer.Children())
-            {
-                if (port is Port && ((Port)port).portName == portName)
+                // if the element is a container, loop back recursively
+                if (element is VisualElement container)
                 {
-                    return (Port)port;
+                    Port foundPort = FindPortByName(portName, container);
+                    if (foundPort != null)
+                    {
+                        return foundPort;
+                    }
                 }
             }
 
             return null;
         }
 
+        public void RemoveConnectionsFromPort(Port port)
+        {
+            if (port == null)
+            {
+                return;
+            }
+
+            foreach (Edge edge in port.connections) // ToList() creates a copy to avoid modifying the collection while iterating
+            {
+                edge.input.Disconnect(edge);
+                edge.output.Disconnect(edge);
+                edge.RemoveFromHierarchy();
+            }
+        }
     }
 }

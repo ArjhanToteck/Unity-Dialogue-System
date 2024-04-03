@@ -32,7 +32,7 @@ namespace DialogueSystem.Editor
                 graphView.SaveConversation();
             });
 
-            inputContainer.Add(speechField);
+            contentContainer.Add(speechField);
 
             // add input and output ports
             AddInputPort();

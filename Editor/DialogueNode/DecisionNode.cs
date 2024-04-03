@@ -19,7 +19,7 @@ namespace DialogueSystem.Editor
 
             AddInputPort();
 
-            var addOptionButton = new Button(() =>
+            Button addOptionButton = new Button(() =>
             {
                 AddOption();
             });
@@ -50,15 +50,26 @@ namespace DialogueSystem.Editor
             }
         }
 
-        //TODO: add buttons to delete these mfs
+        //TODO: allow reordering of options
         private void AddOption(Option option = null)
         {
             bool optionProvided = option != null;
             Port outputPort;
+            VisualElement optionContainer = new VisualElement();
+            contentContainer.Add(optionContainer);
 
-            // add label for option
-            Label optionNameLabel = new Label("Option " + optionsAdded);
-            inputContainer.Add(optionNameLabel);
+            AddSpacer(optionContainer);
+
+            // add heading for option
+            VisualElement headingContainer = new VisualElement();
+            headingContainer.style.flexDirection = FlexDirection.Row;
+            headingContainer.style.marginBottom = 5;
+            optionContainer.Add(headingContainer);
+
+            Label headingLabel = new Label("Option " + optionsAdded);
+            headingLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            headingLabel.style.flexGrow = 1;
+            headingContainer.Add(headingLabel);
 
             // add text field
             TextField optionField = new TextField("Option:")
@@ -74,7 +85,7 @@ namespace DialogueSystem.Editor
                 graphView.SaveConversation();
             });
 
-            inputContainer.Add(optionField);
+            optionContainer.Add(optionField);
 
             // if no option is passed, we create a new one
             if (!optionProvided)
@@ -84,7 +95,7 @@ namespace DialogueSystem.Editor
                 ((Decision)dialogue).options.Add(option);
 
                 // create output port with unique guid as name
-                outputPort = AddOutputPort(Guid.NewGuid().ToString());
+                outputPort = AddOutputPort(Guid.NewGuid().ToString(), optionContainer);
 
                 // create link
                 option.link = NodeLinkData.FromPort(outputPort);
@@ -95,11 +106,19 @@ namespace DialogueSystem.Editor
             else
             {
                 // recreate output port from option object
-                outputPort = AddOutputPort(option.link.outputPortName);
+                outputPort = AddOutputPort(option.link.outputPortName, optionContainer);
             }
 
             // set value (either default or loaded value)
             optionField.value = option.option;
+
+            // delete button
+            Button removeOptionButton = new Button(() =>
+            {
+                RemoveOption(option, outputPort, optionContainer);
+            });
+            removeOptionButton.text = "Remove";
+            headingContainer.Add(removeOptionButton);
 
             // hide default port name label
             Label oldOutputPortLabel = outputPort.contentContainer.Q<Label>();
@@ -108,9 +127,18 @@ namespace DialogueSystem.Editor
 
             // add new label
             Label outputPortLabel = new Label(nextPortName);
-            outputPort.Add(outputPortLabel);
+            outputPort.contentContainer.Add(outputPortLabel);
 
             optionsAdded++;
+        }
+
+        private void RemoveOption(Option option, Port outputPort, VisualElement optionContainer)
+        {
+            ((Decision)dialogue).options.Remove(option);
+            contentContainer.Remove(optionContainer);
+            RemoveConnectionsFromPort(outputPort);
+
+            graphView.SaveConversation();
         }
 
         public override void OnCreateLink(Edge edge)
