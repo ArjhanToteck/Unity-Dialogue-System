@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -163,7 +164,7 @@ namespace DialogueSystem.Editor
                 return;
             }
 
-            foreach (Edge edge in port.connections) // ToList() creates a copy to avoid modifying the collection while iterating
+            foreach (Edge edge in port.connections.ToList())
             {
                 edge.input.Disconnect(edge);
                 edge.output.Disconnect(edge);

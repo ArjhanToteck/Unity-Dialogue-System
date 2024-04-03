@@ -10,6 +10,8 @@ namespace DialogueSystem.Editor
     // TODO: forgot to add speaker name input lol
     public class SpeechNode : DialogueNode
     {
+        private TextField speakerNameField;
+        private Toggle showSpeakerNameBox;
         private TextField speechField;
 
         public SpeechNode()
@@ -18,8 +20,29 @@ namespace DialogueSystem.Editor
 
             title = "Speech";
 
+            // show speaker name checkbox
+            showSpeakerNameBox = new Toggle("Show Speaker Name")
+            {
+                value = true
+            };
+            showSpeakerNameBox.RegisterValueChangedCallback(evt =>
+            {
+                speakerNameField.SetEnabled(evt.newValue);
+                ((Speech)dialogue).showSpeakerName = evt.newValue;
+                graphView.SaveConversation();
+            });
+            contentContainer.Add(showSpeakerNameBox);
+
+            speakerNameField = new TextField("Speaker Name");
+            speakerNameField.RegisterValueChangedCallback(evt =>
+            {
+                ((Speech)dialogue).speakerName = evt.newValue;
+                graphView.SaveConversation();
+            });
+            contentContainer.Add(speakerNameField);
+
             // add speech text field
-            speechField = new TextField("Dialogue:")
+            speechField = new TextField("Speech")
             {
                 multiline = true
             };
@@ -31,7 +54,6 @@ namespace DialogueSystem.Editor
                 ((Speech)dialogue).speech = evt.newValue;
                 graphView.SaveConversation();
             });
-
             contentContainer.Add(speechField);
 
             // add input and output ports
@@ -45,6 +67,11 @@ namespace DialogueSystem.Editor
         public override void LoadNodeFromDialogue(Dialogue dialogue)
         {
             base.LoadNodeFromDialogue(dialogue);
+
+            // load speaker name
+            showSpeakerNameBox.value = ((Speech)dialogue).showSpeakerName;
+            speakerNameField.SetEnabled(showSpeakerNameBox.value);
+            speakerNameField.value = ((Speech)dialogue).speakerName;
 
             // load speech text
             speechField.value = ((Speech)dialogue).speech;

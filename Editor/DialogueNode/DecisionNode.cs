@@ -72,7 +72,7 @@ namespace DialogueSystem.Editor
             headingContainer.Add(headingLabel);
 
             // add text field
-            TextField optionField = new TextField("Option:")
+            TextField optionField = new TextField("Option")
             {
                 multiline = true
             };
