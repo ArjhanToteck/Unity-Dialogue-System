@@ -1,4 +1,4 @@
-
+#if UNITY_EDITOR
 using System;
 
 namespace DialogueSystem.Editor
@@ -14,3 +14,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif

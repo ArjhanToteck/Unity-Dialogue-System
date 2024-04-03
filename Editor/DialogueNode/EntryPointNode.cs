@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
@@ -48,3 +45,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif

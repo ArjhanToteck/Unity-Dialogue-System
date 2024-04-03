@@ -1,6 +1,6 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -10,7 +10,7 @@ using UnityEditor.Callbacks;
 namespace DialogueSystem.Editor
 {
 
-    public static class ConversationFileManager
+    public static class ConversationSaveManager
     {
         public const string conversationExtension = ".conversation";
         public const string defaultConversationFileName = "Conversation" + conversationExtension;
@@ -58,7 +58,7 @@ namespace DialogueSystem.Editor
             string assetPath = AssetDatabase.GetAssetPath(instanceID);
 
             // check if dialogue asset was opened
-            if (assetPath.EndsWith(ConversationFileManager.conversationExtension))
+            if (assetPath.EndsWith(ConversationSaveManager.conversationExtension))
             {
                 // open editor window and make note of the loaded asset path
                 var window = ConversationEditorWindow.OpenConversationEditorWindow();
@@ -94,6 +94,11 @@ namespace DialogueSystem.Editor
 
         public static Conversation LoadConversation(ConversationGraphView graphView, string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+
             // deserialize conversation
             string json = File.ReadAllText(filePath);
             Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
@@ -131,3 +136,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif

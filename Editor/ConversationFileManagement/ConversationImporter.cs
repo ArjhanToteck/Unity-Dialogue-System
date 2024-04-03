@@ -1,10 +1,10 @@
-using DialogueSystem.Editor;
+#if UNITY_EDITOR
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
-    [ScriptedImporter(1, ConversationFileManager.conversationExtension)]
+    [ScriptedImporter(1, ConversationSaveManager.conversationExtension)]
     public class ConversationImporter : ScriptedImporter
     {
         private const string iconPath = "ConversationIcon";
@@ -18,3 +18,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif

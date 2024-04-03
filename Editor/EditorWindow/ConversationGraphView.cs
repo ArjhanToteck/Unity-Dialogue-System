@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
+#if UNITY_EDITOR
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -196,7 +193,8 @@ namespace DialogueSystem.Editor
 				return;
 			}
 
-			ConversationFileManager.SaveConversation(dialogueNodes, window.savePath);
+			ConversationSaveManager.SaveConversation(dialogueNodes, window.savePath);
 		}
 	}
 }
+#endif

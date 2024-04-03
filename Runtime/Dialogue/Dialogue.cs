@@ -21,11 +21,13 @@ namespace DialogueSystem
 
         public NodeData nodeData = new NodeData();
 
+#if UNITY_EDITOR
         public Type GetAssociatedNodeType()
         {
             var dialogueType = GetType();
             var attribute = (AssociatedNodeAttribute)Attribute.GetCustomAttribute(dialogueType, typeof(AssociatedNodeAttribute));
             return attribute?.NodeType;
         }
+#endif
     }
 }

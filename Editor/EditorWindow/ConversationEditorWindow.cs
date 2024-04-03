@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -11,6 +9,7 @@ namespace DialogueSystem.Editor
     // TODO: possibly rename to ConversationGraphWindow
     public class ConversationEditorWindow : EditorWindow
     {
+        public static List<ConversationEditorWindow> openWindows = new List<ConversationEditorWindow>();
         public ConversationGraphView graphView;
         public string savePath;
 
@@ -25,20 +24,29 @@ namespace DialogueSystem.Editor
 
         private void OnEnable()
         {
+            ResetWindow();
+        }
+
+        private void OnDisable()
+        {
+            openWindows.Remove(this);
+
+            // remove graph view
+            rootVisualElement.Remove(graphView);
+        }
+
+        public void ResetWindow()
+        {
+            openWindows.Add(this);
+
             AddGraphView();
             CreateToolBar();
 
             // check if we have a file path, but not loaded yet (this happens on recompile, for example)
             if (!graphView.doneLoadingFile && savePath != null)
             {
-                ConversationFileManager.LoadConversation(graphView, savePath);
+                ConversationSaveManager.LoadConversation(graphView, savePath);
             }
-        }
-
-        private void OnDisable()
-        {
-            // remove window
-            rootVisualElement.Remove(graphView);
         }
 
         private void AddGraphView()
@@ -56,6 +64,7 @@ namespace DialogueSystem.Editor
             rootVisualElement.Add(graphView);
         }
 
+        // TODO: put these in the context menu instead of the toolbar
         private void CreateToolBar()
         {
             Toolbar toolbar = new Toolbar();
@@ -82,3 +91,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif

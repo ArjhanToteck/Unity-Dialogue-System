@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+#if UNITY_EDITOR
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -167,3 +165,4 @@ namespace DialogueSystem.Editor
         }
     }
 }
+#endif
