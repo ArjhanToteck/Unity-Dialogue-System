@@ -6,12 +6,11 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
-    // TODO: refactor some of the methods here to go into the view class
     public abstract class DialogueNode : Node
     {
         protected const string previousPortName = "Previous";
         protected const string nextPortName = "Next";
-
+        // TODO: refactor, let's only store guid in dialogue.nodeData for simplicity
         public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
         public ConversationGraphView graphView;

@@ -9,6 +9,8 @@ namespace DialogueSystem.Editor
 {
     public class DecisionNode : DialogueNode
     {
+        private int optionsAdded = 0;
+
         public DecisionNode()
         {
             UpdateDialogue(new Decision());
@@ -48,22 +50,41 @@ namespace DialogueSystem.Editor
             }
         }
 
+        //TODO: add buttons to delete these mfs
         private void AddOption(Option option = null)
         {
-            // if no option is passed, we create a new one
-            if (option == null)
-            {
-                int optionIndex = ((Decision)dialogue).options.Count;
+            bool optionProvided = option != null;
+            Port outputPort;
 
+            // add label for option
+            Label optionNameLabel = new Label("Option " + optionsAdded);
+            inputContainer.Add(optionNameLabel);
+
+            // add text field
+            TextField optionField = new TextField("Option:")
+            {
+                multiline = true
+            };
+            optionField.style.minWidth = 250;
+
+            optionField.RegisterValueChangedCallback(evt =>
+            {
+                // set option in dialogue and update file
+                option.option = evt.newValue;
+                graphView.SaveConversation();
+            });
+
+            inputContainer.Add(optionField);
+
+            // if no option is passed, we create a new one
+            if (!optionProvided)
+            {
                 // create option object and add to decision object
-                option = new Option
-                {
-                    option = "Option " + optionIndex
-                };
+                option = new Option();
                 ((Decision)dialogue).options.Add(option);
 
-                // create output port
-                Port outputPort = AddOutputPort(option.option);
+                // create output port with unique guid as name
+                outputPort = AddOutputPort(Guid.NewGuid().ToString());
 
                 // create link
                 option.link = NodeLinkData.FromPort(outputPort);
@@ -73,9 +94,23 @@ namespace DialogueSystem.Editor
             }
             else
             {
-                // create output port
-                AddOutputPort(option.option);
+                // recreate output port from option object
+                outputPort = AddOutputPort(option.link.outputPortName);
             }
+
+            // set value (either default or loaded value)
+            optionField.value = option.option;
+
+            // hide default port name label
+            Label oldOutputPortLabel = outputPort.contentContainer.Q<Label>();
+            oldOutputPortLabel.style.width = 0;
+            oldOutputPortLabel.style.visibility = Visibility.Hidden;
+
+            // add new label
+            Label outputPortLabel = new Label(nextPortName);
+            outputPort.Add(outputPortLabel);
+
+            optionsAdded++;
         }
 
         public override void OnCreateLink(Edge edge)

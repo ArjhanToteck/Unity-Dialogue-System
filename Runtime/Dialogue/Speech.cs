@@ -17,6 +17,7 @@ namespace DialogueSystem
     public class Speech : Dialogue
     {
         public string speakerName = "";
+        public bool showSpeakerName = true;
         public string speech = "";
         public NodeLinkData nextLink = null;
     }

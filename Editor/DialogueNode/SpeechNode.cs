@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor
 {
+    // TODO: forgot to add speaker name input lol
     public class SpeechNode : DialogueNode
     {
         private TextField speechField;
