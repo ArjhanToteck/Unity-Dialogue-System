@@ -142,7 +142,7 @@ namespace DialogueSystem.Editor
 
 		public DialogueNode GetDialogueNodeByGuid(string guid)
 		{
-			return dialogueNodes.Find(node => node.guid == guid);
+			return dialogueNodes.Find(node => node.dialogue.nodeData.guid == guid);
 		}
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

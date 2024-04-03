@@ -12,8 +12,6 @@ namespace DialogueSystem.Editor
     {
         protected const string previousPortName = "Previous";
         protected const string nextPortName = "Next";
-        // TODO: refactor, let's only store guid in dialogue.nodeData for simplicity
-        public string guid = Guid.NewGuid().ToString();
         public Dialogue dialogue;
         public ConversationGraphView graphView;
 
@@ -27,9 +25,6 @@ namespace DialogueSystem.Editor
         {
             // set dialogue
             this.dialogue = dialogue;
-
-            // set guid
-            guid = dialogue.nodeData.guid;
 
             // set position
             Vector2 position = new Vector2(this.dialogue.nodeData.position[0], this.dialogue.nodeData.position[1]);
@@ -54,7 +49,6 @@ namespace DialogueSystem.Editor
         public void UpdateDialogue(Dialogue dialogue)
         {
             this.dialogue = dialogue;
-            dialogue.nodeData.guid = guid;
             SavePositionInDialogue();
         }
 

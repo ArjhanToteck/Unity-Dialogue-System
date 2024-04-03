@@ -23,7 +23,7 @@ namespace DialogueSystem
             {
                 outputPortName = edge.output.portName,
                 inputPortName = edge.input.portName,
-                connectedNodeGuid = ((DialogueNode)edge.input.node).guid
+                connectedNodeGuid = ((DialogueNode)edge.input.node).dialogue.nodeData.guid
             };
 
             return link;

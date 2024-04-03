@@ -150,7 +150,7 @@ namespace DialogueSystem.Editor
                 if (option.link.outputPortName == edge.output.portName)
                 {
                     // set guid of connected node
-                    option.link.connectedNodeGuid = ((DialogueNode)edge.input.node).guid;
+                    option.link.connectedNodeGuid = ((DialogueNode)edge.input.node).dialogue.nodeData.guid;
                     option.link.inputPortName = edge.input.portName;
 
                     break;
