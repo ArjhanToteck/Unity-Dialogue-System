@@ -13,6 +13,7 @@ namespace DialogueSystem.Editor
 		public List<DialogueNode> dialogueNodes;
 		public bool doneLoadingFile = false;
 		private Label defaultMessage;
+		private DialogueSearchWindow searchWindow;
 
 		public ConversationGraphView()
 		{
@@ -47,6 +48,9 @@ namespace DialogueSystem.Editor
 
 			// listen for changes
 			graphViewChanged = OnGraphViewChanged;
+
+			// search window
+			AddSearchWindow();
 		}
 
 		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -126,6 +130,18 @@ namespace DialogueSystem.Editor
 			{
 				RemoveElement(edge);
 			}
+		}
+
+		public void AddSearchWindow()
+		{
+			searchWindow = ScriptableObject.CreateInstance<DialogueSearchWindow>();
+			searchWindow.graphView = this;
+			searchWindow.window = window;
+
+			nodeCreationRequest = (context) =>
+			{
+				SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
+			};
 		}
 
 		public void AddDialogueNode(DialogueNode dialogueNode)

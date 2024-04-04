@@ -40,7 +40,6 @@ namespace DialogueSystem.Editor
             openWindows.Add(this);
 
             AddGraphView();
-            CreateToolBar();
 
             // check if we have a file path, but not loaded yet (this happens on recompile, for example)
             if (!graphView.doneLoadingFile && savePath != null)
@@ -62,32 +61,6 @@ namespace DialogueSystem.Editor
 
             // actually display view
             rootVisualElement.Add(graphView);
-        }
-
-        // TODO: put these in the context menu instead of the toolbar
-        private void CreateToolBar()
-        {
-            Toolbar toolbar = new Toolbar();
-
-            // create speech node
-            var createSpeechNodeButton = new Button(() =>
-            {
-                graphView.AddDialogueNode(new SpeechNode());
-            });
-            createSpeechNodeButton.text = "Create Speech Node";
-            toolbar.Add(createSpeechNodeButton);
-
-            // create choice node
-            var createChoiceNodeButton = new Button(() =>
-            {
-                graphView.AddDialogueNode(new DecisionNode());
-            })
-            {
-                text = "Create Choice Node"
-            };
-            toolbar.Add(createChoiceNodeButton);
-
-            rootVisualElement.Add(toolbar);
         }
     }
 }

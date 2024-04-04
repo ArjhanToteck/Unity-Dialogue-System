@@ -15,7 +15,6 @@ namespace DialogueSystem.Editor
 
         public DialogueNode()
         {
-            SetPosition(new Rect(NodeData.defaultPosition, NodeData.defaultSize));
             contentContainer.style.backgroundColor = new Color(0.35f, 0.35f, 0.35f, 0.75f);
         }
 
@@ -44,9 +43,14 @@ namespace DialogueSystem.Editor
             return null;
         }
 
-        public void UpdateDialogue(Dialogue dialogue)
+        public void UpdateDialogue(Dialogue dialogue = null)
         {
-            this.dialogue = dialogue;
+            // set dialogue if needed
+            if (dialogue != null)
+            {
+                this.dialogue = dialogue;
+            }
+
             SavePositionInDialogue();
         }
 
