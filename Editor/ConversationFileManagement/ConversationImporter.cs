@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
+    /// <summary>
+    /// Handles the import of a conversation file.
+    /// </summary>
     [ScriptedImporter(1, ConversationSaveManager.conversationExtension)]
     public class ConversationImporter : ScriptedImporter
     {

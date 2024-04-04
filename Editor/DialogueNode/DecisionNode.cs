@@ -125,7 +125,7 @@ namespace DialogueSystem.Editor
             oldOutputPortLabel.style.visibility = Visibility.Hidden;
 
             // add new label
-            Label outputPortLabel = new Label(nextPortName);
+            Label outputPortLabel = new Label(outputPortName);
             outputPort.contentContainer.Add(outputPortLabel);
 
             optionsAdded++;
@@ -135,12 +135,12 @@ namespace DialogueSystem.Editor
         {
             ((Decision)dialogue).options.Remove(option);
             contentContainer.Remove(optionContainer);
-            RemoveConnectionsFromPort(outputPort);
+            RemoveAllConnectionsFromPort(outputPort);
 
             graphView.SaveConversation();
         }
 
-        public override void OnCreateLink(Edge edge)
+        public override void OnCreateOutputLink(Edge edge)
         {
             // loop through options
             foreach (Option option in ((Decision)dialogue).options)
@@ -157,7 +157,7 @@ namespace DialogueSystem.Editor
             }
         }
 
-        public override void OnRemoveLink(Edge edge)
+        public override void OnRemoveOutputLink(Edge edge)
         {
             // loop through options
             foreach (Option option in ((Decision)dialogue).options)

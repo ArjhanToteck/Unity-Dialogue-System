@@ -9,18 +9,30 @@ using UnityEditor.Callbacks;
 
 namespace DialogueSystem.Editor
 {
-
+    /// <summary>
+    /// Manages saving and loading from a conversation file.
+    /// </summary>
+    // TODO: probably refactor this and put some of this functionality in runtime for when the conversation file is actually used
     public static class ConversationSaveManager
     {
+        /// <summary>
+        /// The file extension for conversation files.
+        /// </summary>
         public const string conversationExtension = ".conversation";
+
+        /// <summary>
+        /// The default name for conversation files.
+        /// </summary>
         public const string defaultConversationFileName = "Conversation" + conversationExtension;
 
-        static readonly JsonSerializerSettings settings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings settings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        // handle creating conversation files in editor
+        /// <summary>
+        /// Handles creating new conversation files from the editor.
+        /// </summary>
         [MenuItem("Assets/Create/Dialogue System/Conversation")]
         public static void CreateConversationAsset()
         {
@@ -50,7 +62,9 @@ namespace DialogueSystem.Editor
             Selection.activeObject = conversationFile;
         }
 
-        // handle opening conversation files in editor
+        /// <summary>
+        /// Handles opening conversation files from the editor.
+        /// </summary>
         [OnOpenAsset(1)]
         public static bool OnOpenAsset(int instanceID, int line)
         {
@@ -72,6 +86,9 @@ namespace DialogueSystem.Editor
             return false;
         }
 
+        /// <summary>
+        /// Saves a conversation given a list of dialogue nodes and path.
+        /// </summary>
         public static void SaveConversation(List<DialogueNode> dialogueNodes, string filePath)
         {
             var conversation = new Conversation();
@@ -86,12 +103,18 @@ namespace DialogueSystem.Editor
             SaveConversation(conversation, filePath);
         }
 
+        /// <summary>
+        /// Saves a conversation given a graph view and path.
+        /// </summary>
         public static void SaveConversation(Conversation conversation, string filePath)
         {
             string conversationJson = JsonConvert.SerializeObject(conversation, settings);
             File.WriteAllText(filePath, conversationJson);
         }
 
+        /// <summary>
+        /// Loads a conversation into a graph view given a path.
+        /// </summary>
         public static Conversation LoadConversation(ConversationGraphView graphView, string filePath)
         {
             if (!File.Exists(filePath))
@@ -104,7 +127,7 @@ namespace DialogueSystem.Editor
             Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
 
             // mark as loading and clear
-            graphView.doneLoadingFile = false;
+            graphView.conversationLoaded = false;
             graphView.ClearGraphView();
 
             // loop through dialogue objects
@@ -129,7 +152,7 @@ namespace DialogueSystem.Editor
             }
 
             // mark as no longer loading
-            graphView.doneLoadingFile = true;
+            graphView.conversationLoaded = true;
             graphView.OnFinishedLoading();
 
             return conversation;

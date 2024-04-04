@@ -82,17 +82,17 @@ namespace DialogueSystem.Editor
             AddLinkFromNodeLinkData(((Speech)dialogue).nextLink);
         }
 
-        public override void OnCreateLink(Edge edge)
+        public override void OnCreateOutputLink(Edge edge)
         {
-            if (edge.output.portName == nextPortName)
+            if (edge.output.portName == outputPortName)
             {
                 ((Speech)dialogue).nextLink = NodeLinkData.FromEdge(edge);
             }
         }
 
-        public override void OnRemoveLink(Edge edge)
+        public override void OnRemoveOutputLink(Edge edge)
         {
-            if (edge.output.portName == nextPortName)
+            if (edge.output.portName == outputPortName)
             {
                 ((Speech)dialogue).nextLink = null;
             }

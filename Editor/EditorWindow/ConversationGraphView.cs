@@ -8,10 +8,21 @@ namespace DialogueSystem.Editor
 {
 	public class ConversationGraphView : GraphView
 	{
+		/// <summary>
+		/// The editor window where the graph view is open.
+		/// </summary>
 		public ConversationEditorWindow window;
-		// we probably shouldn't assume all nodes are dialogue nodes, so let's keep track of them here
+
+		/// <summary>
+		/// The list of all created dialogue nodes in this graph view.
+		/// </summary>
 		public List<DialogueNode> dialogueNodes;
-		public bool doneLoadingFile = false;
+
+		/// <summary>
+		/// Whether or not a conversation file is fully loaded into the graph view.
+		/// </summary>
+		public bool conversationLoaded = false;
+
 		private Label defaultMessage;
 		private DialogueSearchWindow searchWindow;
 
@@ -31,6 +42,9 @@ namespace DialogueSystem.Editor
 			Add(defaultMessage);
 		}
 
+		/// <summary>
+		/// Called after a conversation is completely loaded from its file.
+		/// </summary>
 		public void OnFinishedLoading()
 		{
 			// remove message label
@@ -53,10 +67,123 @@ namespace DialogueSystem.Editor
 			AddSearchWindow();
 		}
 
-		public GraphViewChange OnGraphViewChanged(GraphViewChange change)
+		/// <summary>
+		/// Clears a conversation from the graph view.
+		/// </summary>
+		public void ClearGraphView()
+		{
+			// reset nodes list
+			dialogueNodes = new List<DialogueNode>();
+
+			// remove all nodes
+			foreach (var node in nodes.ToList())
+			{
+				RemoveElement(node);
+			}
+
+			// remove all edges
+			foreach (var edge in edges.ToList())
+			{
+				RemoveElement(edge);
+			}
+		}
+
+		/// <summary>
+		/// Adds a DialogueNode object to the graph view.
+		/// </summary>
+		public void AddDialogueNode(DialogueNode dialogueNode)
+		{
+			dialogueNode.graphView = this;
+			AddElement(dialogueNode);
+			dialogueNodes.Add(dialogueNode);
+
+			SaveConversation();
+		}
+
+		/// <summary>
+		/// Returns a DialogueNode object in the graph view with the given guid
+		/// </summary>
+		public DialogueNode GetDialogueNodeByGuid(string guid)
+		{
+			return dialogueNodes.Find(node => node.dialogue.nodeData.guid == guid);
+		}
+
+		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+		{
+			var compatiblePorts = new List<Port>();
+
+			foreach (Port port in ports)
+			{
+				// make sure port doesn't connect to itself
+				if (startPort == port) continue;
+
+				// make sure input doesn't connect to input and output doesn't connect to output
+				if (startPort.direction == port.direction) continue;
+
+				compatiblePorts.Add(port);
+			}
+
+			return compatiblePorts;
+		}
+
+		/// <summary>
+		/// Links two dialogue nodes
+		/// </summary>
+		public Edge LinkDialogueNodes(DialogueNode outputNode, string outputPortName, DialogueNode inputNode, string inputPortName)
+		{
+			// find output port
+			Port outputPort = outputNode.FindPortByName(outputPortName);
+
+			// find input port
+			Port inputPort = inputNode.FindPortByName(inputPortName);
+
+			// create edge between ports
+			Edge edge = new Edge
+			{
+				output = outputPort,
+				input = inputPort,
+			};
+
+			// actually connect
+			edge.input.Connect(edge);
+			edge.output.Connect(edge);
+
+			// add connection as element
+			AddElement(edge);
+
+			return edge;
+		}
+
+		/// <summary>
+		/// Saves the conversation to the save path defined in ConversationGraphView.window.
+		/// </summary>
+		public void SaveConversation()
+		{
+			// don't save anything if we're loading
+			if (!conversationLoaded)
+			{
+				return;
+			}
+
+			ConversationSaveManager.SaveConversation(dialogueNodes, window.savePath);
+		}
+
+		private void AddSearchWindow()
+		{
+			searchWindow = ScriptableObject.CreateInstance<DialogueSearchWindow>();
+			searchWindow.graphView = this;
+			searchWindow.window = window;
+
+			nodeCreationRequest = (context) =>
+			{
+				SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
+			};
+		}
+
+		private GraphViewChange OnGraphViewChanged(GraphViewChange change)
 		{
 			// don't save anything if we're currently loading
-			if (!doneLoadingFile)
+			if (!conversationLoaded)
 			{
 				return change;
 			}
@@ -77,7 +204,7 @@ namespace DialogueSystem.Editor
 						// check if link was from a dialogue node
 						if (edge.output.node is DialogueNode dialogueNode1)
 						{
-							dialogueNode1.OnRemoveLink(edge);
+							dialogueNode1.OnRemoveOutputLink(edge);
 						}
 					}
 				}
@@ -104,7 +231,7 @@ namespace DialogueSystem.Editor
 					// check if link is from a dialogue node
 					if (edge.output.node is DialogueNode dialogueNode)
 					{
-						dialogueNode.OnCreateLink(edge);
+						dialogueNode.OnCreateOutputLink(edge);
 					}
 				}
 			}
@@ -114,103 +241,6 @@ namespace DialogueSystem.Editor
 			return change;
 		}
 
-		public void ClearGraphView()
-		{
-			// reset nodes list
-			dialogueNodes = new List<DialogueNode>();
-
-			// remove all nodes
-			foreach (var node in nodes.ToList())
-			{
-				RemoveElement(node);
-			}
-
-			// remove all edges
-			foreach (var edge in edges.ToList())
-			{
-				RemoveElement(edge);
-			}
-		}
-
-		public void AddSearchWindow()
-		{
-			searchWindow = ScriptableObject.CreateInstance<DialogueSearchWindow>();
-			searchWindow.graphView = this;
-			searchWindow.window = window;
-
-			nodeCreationRequest = (context) =>
-			{
-				SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
-			};
-		}
-
-		public void AddDialogueNode(DialogueNode dialogueNode)
-		{
-			dialogueNode.graphView = this;
-			AddElement(dialogueNode);
-			dialogueNodes.Add(dialogueNode);
-
-			SaveConversation();
-		}
-
-		public DialogueNode GetDialogueNodeByGuid(string guid)
-		{
-			return dialogueNodes.Find(node => node.dialogue.nodeData.guid == guid);
-		}
-
-		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
-		{
-			var compatiblePorts = new List<Port>();
-
-			foreach (Port port in ports)
-			{
-				// make sure port doesn't connect to itself
-				if (startPort == port) continue;
-
-				// make sure input doesn't connect to input and output doesn't connect to output
-				if (startPort.direction == port.direction) continue;
-
-				compatiblePorts.Add(port);
-			}
-
-			return compatiblePorts;
-		}
-
-		public Edge LinkNodes(DialogueNode outputNode, string outputPortName, DialogueNode inputNode, string inputPortName)
-		{
-			// find output port
-			Port outputPort = outputNode.FindPortByName(outputPortName);
-
-			// find input port
-			Port inputPort = inputNode.FindPortByName(inputPortName);
-
-			// create edge between ports
-			Edge edge = new Edge
-			{
-				output = outputPort,
-				input = inputPort,
-			};
-
-			// actually connect
-			edge.input.Connect(edge);
-			edge.output.Connect(edge);
-
-			// add connection as element
-			AddElement(edge);
-
-			return edge;
-		}
-
-		public void SaveConversation()
-		{
-			// don't save anything if we're loading
-			if (!doneLoadingFile)
-			{
-				return;
-			}
-
-			ConversationSaveManager.SaveConversation(dialogueNodes, window.savePath);
-		}
 	}
 }
 #endif

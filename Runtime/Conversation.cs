@@ -5,12 +5,20 @@ using System.Collections.Generic;
 
 namespace DialogueSystem
 {
+    /// <summary>
+    /// A container for dialogue.
+    /// </summary>
     [System.Serializable]
-
     public class Conversation
     {
+        /// <summary>
+        /// A list of the Dialogue objects that make up the conversation.
+        /// </summary>
         public List<Dialogue> dialogues = new List<Dialogue>();
 
+        /// <summary>
+        /// Returns the default conversation with an entry point.
+        /// </summary>
         public static Conversation DefaultConversation()
         {
             // create dialogue with entry point
@@ -20,9 +28,9 @@ namespace DialogueSystem
             return conversation;
         }
 
+        // Add dialogue to the Conversation.
         public void AddDialogue(Dialogue dialogue)
         {
-            dialogue.parentConversation = this;
             dialogues.Add(dialogue);
         }
     }

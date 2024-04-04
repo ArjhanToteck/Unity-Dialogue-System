@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor
 {
+    /// <summary>
+    /// Handles the user modification of a conversation file.
+    /// </summary>
     public class ConversationModificationProcessor : AssetModificationProcessor
     {
         private static AssetDeleteResult OnWillDeleteAsset(string assetPath, RemoveAssetOptions options)
