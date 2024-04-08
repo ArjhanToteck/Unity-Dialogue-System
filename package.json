@@ -1,5 +1,5 @@
 {
-	"name": "com.arjhantoteck.dialoguesystem",
+	"name": "com.arjhantoteck.dialogue-system",
 	"displayName": "Dialogue System",
 	"description": "A modular, node-based dialogue system that supports branching.",
 	"author": {
