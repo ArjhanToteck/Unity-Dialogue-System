@@ -10,5 +10,8 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ArjhanToteck/Unity-Dialogue-System.git"
+	},
+	"dependencies": {
+		"com.unity.nuget.newtonsoft-json": "3.2.1"
 	}
 }
