@@ -25,7 +25,7 @@ namespace DialogueSystem.Editor
         /// </summary>
         public const string defaultConversationFileName = "Conversation" + conversationExtension;
 
-        private static readonly JsonSerializerSettings settings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
         };
@@ -108,7 +108,7 @@ namespace DialogueSystem.Editor
         /// </summary>
         public static void SaveConversation(Conversation conversation, string filePath)
         {
-            string conversationJson = JsonConvert.SerializeObject(conversation, settings);
+            string conversationJson = JsonConvert.SerializeObject(conversation, jsonSettings);
             File.WriteAllText(filePath, conversationJson);
         }
 
@@ -124,7 +124,7 @@ namespace DialogueSystem.Editor
 
             // deserialize conversation
             string json = File.ReadAllText(filePath);
-            Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, settings);
+            Conversation conversation = JsonConvert.DeserializeObject<Conversation>(json, jsonSettings);
 
             // mark as loading and clear
             graphView.conversationLoaded = false;
