@@ -12,6 +12,7 @@
 		"url": "https://github.com/ArjhanToteck/Unity-Dialogue-System.git"
 	},
 	"dependencies": {
-		"com.unity.nuget.newtonsoft-json": "3.2.1"
+		"com.unity.nuget.newtonsoft-json": "3.2.1",
+		"com.arjhantoteck.returnable-unity-events": "https://github.com/ArjhanToteck/Returnable-Unity-Events.git"
 	}
 }

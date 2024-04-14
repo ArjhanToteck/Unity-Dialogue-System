@@ -1,7 +1,9 @@
 {
     "name": "com.arjhantoteck.dialogue-system",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "com.arjhantoteck.returnable-unity-events"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

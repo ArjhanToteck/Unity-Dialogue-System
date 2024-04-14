@@ -34,6 +34,7 @@ namespace DialogueSystem.Editor
         public DialogueNode()
         {
             contentContainer.style.backgroundColor = new Color(0.35f, 0.35f, 0.35f, 0.75f);
+            title = "Dialogue Node";
         }
 
         /// <summary>

@@ -18,6 +18,8 @@ namespace DialogueSystem
         /// <summary>
         /// The portName of the output port.
         /// </summary>
+
+        // TODO: start using guids for ports and links
         public string outputPortName;
 
         /// <summary>

@@ -16,7 +16,7 @@ namespace DialogueSystem
     [AssociatedNode(typeof(DialogueNode))]
 #endif
     [Serializable]
-    public abstract class Dialogue
+    public abstract class Dialogue : ScriptableObject
     {
         /// <summary>
         /// The data of the node used to create this dialogue object.

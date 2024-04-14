@@ -29,6 +29,11 @@ namespace DialogueSystem.Editor
             {
                 userData = typeof(DecisionNode),
                 level = 1
+            },
+            new SearchTreeEntry(new GUIContent("Branch"))
+            {
+                userData = typeof(BranchNode),
+                level = 1
             }
         };
 
