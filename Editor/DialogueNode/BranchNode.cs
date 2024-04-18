@@ -18,9 +18,9 @@ namespace DialogueSystem.Editor
             title = "Branch";
 
             // add returnable event field
-            SerializedObject serializedCondition = new SerializedObject((Branch)dialogue);
-            PropertyField conditionField = new PropertyField(serializedCondition.FindProperty("condition"));
-            Debug.Log(serializedCondition.FindProperty("condition").managedReferenceValue);
+            Debug.Log(((Branch)dialogue).condition);
+            SerializedObject serializedCondition = new SerializedObject(((Branch)dialogue).condition);
+            PropertyField conditionField = new PropertyField(serializedCondition.GetIterator());
             contentContainer.Add(conditionField);
             Debug.Log("done");
 
