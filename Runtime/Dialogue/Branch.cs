@@ -23,7 +23,7 @@ namespace DialogueSystem
         /// A serializable callback object with a bool return type used to decide which path to follow at runtime.
         /// </summary>
         [SerializeReference]
-        public ReturnableUnityEventSerializable condition = ScriptableObject.CreateInstance<ReturnableUnityEventSerializable>();
+        public ReturnableUnityEventSerializableWrapper condition = ScriptableObject.CreateInstance<ReturnableUnityEventSerializableWrapper>();
 
         /// <summary>
         /// The link pointing to the next dialogue object if the condition is true.

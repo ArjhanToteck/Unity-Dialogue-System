@@ -1,11 +1,11 @@
-#if UNITY_EDITOR
-using System;
 using ReturnableUnityEvents;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
+using UnityEngine.Events;
+using System;
+using UnityEditor.Experimental.GraphView;
 
 namespace DialogueSystem.Editor
 {
@@ -18,11 +18,29 @@ namespace DialogueSystem.Editor
             title = "Branch";
 
             // add returnable event field
-            Debug.Log(((Branch)dialogue).condition);
-            SerializedObject serializedCondition = new SerializedObject(((Branch)dialogue).condition);
-            PropertyField conditionField = new PropertyField(serializedCondition.GetIterator());
-            contentContainer.Add(conditionField);
-            Debug.Log("done");
+            
+            // get serialized property iterator
+            SerializedObject serializedCondition = new SerializedObject(ScriptableObject.CreateInstance<ReturnableUnityEventSerializableWrapper>());
+            SerializedProperty conditionProperty = serializedCondition.GetIterator();
+
+            // start searching
+            conditionProperty.Next(true);
+            
+            // skip 1st item (script reference)
+            conditionProperty.NextVisible(false);
+
+            // loop through remaining properties
+            while (conditionProperty.NextVisible(false))
+            {
+                PropertyField propertyField = new PropertyField(conditionProperty);
+                propertyField.Bind(conditionProperty);
+                contentContainer.Add(propertyField);
+                
+                Debug.Log(conditionProperty.displayName);
+                Debug.Log(propertyField);
+            }
+            
+            EditorGUILayout.PropertyField(serializedCondition.GetIterator());
 
             // add input and output ports
             AddInputPort();
@@ -70,4 +88,3 @@ namespace DialogueSystem.Editor
         }
     }
 }
-#endif
